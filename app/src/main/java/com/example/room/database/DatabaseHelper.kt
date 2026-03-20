@@ -44,6 +44,17 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "QuanLyCanHo.
         onCreate(db)
     }
 
+    fun insertUser(user: User):Long{
+        val db = writableDatabase
+        val values = ContentValues().apply{
+            put("username", user.username)
+            put("password", user.password)
+            put("fullName", user.fullName)
+            put("role", user.role)
+
+        }
+        return db.insert("users", null, values)
+    }
     fun checkLogin(usernameInput: String, passwordInput: String): User? {
         val db = readableDatabase
         val cursor = db.rawQuery("SELECT * FROM users WHERE username = ? AND password = ?", arrayOf(usernameInput, passwordInput))

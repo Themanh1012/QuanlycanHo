@@ -1,15 +1,31 @@
 <resources>
     <string name="app_name">Quản Lý Căn Hộ</string>
 
-
-    <string name="login_title">QUẢN LÝ CĂN HỘ</string>
-    <string name="login_hint_username">Tên đăng nhập</string>
-    <string name="login_hint_password">Mật khẩu</string>
-    <string name ="login_btn_text">ĐăNG NHẬP</string>
-
     <string name="admin_title">TRANG QUẢN TRỊ</string>
     <string name="admin_welcome">Xin chào Admin! Chúc bạn một ngày làm việc thật hiệu quả</string>
     <string name="admin_btn_logout">ĐĂNG XUẤT</string>
 
+    <string name="login_title">QUẢN LÝ CĂN HỘ</string>
+    <string name="login_hint_username">Tên đăng nhập</string>
+    <string name="login_hint_password">Mật khẩu</string>
+    <string name="login_btn_text">ĐăNG NHẬP</string>
+
+
+    <string name="login_go_to_register">Chưa có tài khoản? Đăng ký ngay</string>
+    <string name="login_toast_empty">Vui lòng nhập đủ thông tin</string>
+    <string name="login_toast_admin">Chào Admin: </string>
+    <string name="login_toast_customer">Chào khách hàng: </string>
+    <string name="login_toast_fail">Sai tài khoản hoặc mật khẩu!</string>
+
+    <string name="register_title"> ĐĂNG KÝ TÀI KHOẢN</string>
+    <string name="register_hint_fullname">Họ Và Tên: </string>
+    <string name="register_hint_username">Tên Đăng Nhập </string>
+    <string name="register_hint_password">Mật Khẩu</string>
+
+
+    <string name="register_btn_text">ĐĂNG KÝ NGAY</string>
+    <string name="register_toast_empty">Vui lòng điền đầy đủ thông tin!</string>
+    <string name="register_toast_success">Đăng ký thành công!</string>
+    <string name="register_toast_fail">Đăng ký thất bại, thử lại sau!</string>
 
 </resources>

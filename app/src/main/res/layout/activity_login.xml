@@ -34,8 +34,8 @@
         android:paddingEnd="16dp"
         android:textSize="16sp"/>
     <EditText
-
-        android:layout_width="match_parent"
+        android:id="@+id/edtPassword"
+            android:layout_width="match_parent"
         android:layout_height="55dp"
         android:layout_marginBottom="32dp"
         android:background="@android:drawable/edit_text"
@@ -53,5 +53,15 @@
         android:text="@string/login_btn_text"
         android:textColor="#FFFFFF"
         android:textSize="18sp"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/tvGoToRegister"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/login_go_to_register"
+        android:textColor="#1976D2"
+        android:textSize="16sp"
         android:textStyle="bold"/>
 </LinearLayout>
