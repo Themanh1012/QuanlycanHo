@@ -49,9 +49,9 @@ class LoginActivity : AppCompatActivity() {
                 }else if(user.role == 2){
                     Toast.makeText(this, "Chào khách hàng : ${user.fullName}", Toast.LENGTH_SHORT).show()
                 //CUSSTOMER NHớ LÀM
-                //val intent = Intent(this, CustomerHomeActivity :: class.java)
-                    //startActivity(intent)
-                    //finish()
+                    val intent = Intent(this, MainActivity::class.java)
+                    startActivity(intent)
+                    finish()
                 }else{
                     Toast.makeText(this, "Sai tài khoản hoặc mật khẩu",Toast.LENGTH_SHORT).show()
                 }
