@@ -32,6 +32,16 @@
         android:textSize="16sp" />
 
     <Button
+        android:id="@+id/btnAddApartment"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="#4CAF50"
+        android:text="@string/admin_btn_add_apt"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold" />
+
+    <Button
         android:id="@+id/btnLogout"
         android:layout_width="match_parent"
         android:layout_height="55dp"

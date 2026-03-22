@@ -28,4 +28,16 @@
     <string name="register_toast_success">Đăng ký thành công!</string>
     <string name="register_toast_fail">Đăng ký thất bại, thử lại sau!</string>
 
+
+    <string name="add_apt_title">THÊM CĂN HỘ MỚI</string>
+    <string name="add_apt_hint_title">Tiêu đề (VD: Cho thuê chung cư mini...)</string>
+    <string name="add_apt_hint_price">Giá tiền (VD: 5000000)</string>
+    <string name="add_apt_hint_address">Địa chỉ cụ thể</string>
+    <string name="add_apt_btn_save">LƯU CĂN HỘ</string>
+    <string name="add_apt_toast_empty">Vui lòng nhập đủ thông tin căn hộ!</string>
+    <string name="add_apt_toast_success">Thêm căn hộ thành công!</string>
+    <string name="add_apt_toast_fail">Thêm thất bại, thử lại sau!</string>
+
+    <string name="admin_btn_add_apt">+ THÊM CĂN HỘ MỚI</string>
+
 </resources>
