@@ -1,11 +1,11 @@
-package com.example.room
+package com.example.room.user
 
-import android.content.Context
 import android.os.Bundle
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SwitchCompat // Đã Import đúng thư viện mới
+import com.example.room.R
 
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,7 +19,7 @@ class SettingsActivity : AppCompatActivity() {
         val switchDarkMode = findViewById<SwitchCompat>(R.id.switchDarkMode)
 
         // Khởi tạo bộ nhớ tạm để lưu cài đặt của người dùng
-        val sharedPreferences = getSharedPreferences("AppConfig", Context.MODE_PRIVATE)
+        val sharedPreferences = getSharedPreferences("AppConfig", MODE_PRIVATE)
         val editor = sharedPreferences.edit()
 
         // Kiểm tra xem trước đó người dùng đang bật hay tắt Dark Mode để set trạng thái cho Switch

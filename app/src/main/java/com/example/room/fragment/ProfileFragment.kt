@@ -1,4 +1,4 @@
-package com.example.room
+package com.example.room.fragment
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,6 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
+import com.example.room.user.EditProfileActivity
+import com.example.room.user.HistoryActivity
+import com.example.room.R
+import com.example.room.user.SettingsActivity
+import com.example.room.auth.LoginActivity
 
 class ProfileFragment : Fragment() {
     override fun onCreateView(

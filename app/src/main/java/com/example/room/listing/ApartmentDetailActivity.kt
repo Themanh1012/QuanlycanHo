@@ -1,9 +1,10 @@
-package com.example.room
+package com.example.room.listing
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import com.example.room.R
 
 class ApartmentDetailActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
