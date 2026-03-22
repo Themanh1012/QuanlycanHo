@@ -1,8 +1,10 @@
 package com.example.room
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
@@ -11,8 +13,17 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
+        val sharedPreferences = getSharedPreferences("AppConfig", Context.MODE_PRIVATE)
+        val isDarkMode = sharedPreferences.getBoolean("isDarkMode", false)
+        if (isDarkMode) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        }
+
 
         // Căn chỉnh giao diện để không lẹm vào Status bar
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.fragment_container)) { v, insets ->
@@ -36,9 +47,8 @@ class MainActivity : AppCompatActivity() {
 
             when (item.itemId) {
                 R.id.nav_home -> selectedFragment = HomeFragment()
-                // Sau này bạn thiết kế thêm giao diện Đã lưu và Tài khoản thì bỏ comment 2 dòng dưới
-                // R.id.nav_saved -> selectedFragment = SavedFragment()
-                // R.id.nav_profile -> selectedFragment = ProfileFragment()
+                R.id.nav_saved -> selectedFragment = SavedFragment()
+                R.id.nav_profile -> selectedFragment = ProfileFragment()
             }
 
             if (selectedFragment != null) {

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F3F4F6"
+    android:background="@color/bg_main"
     tools:context=".MainActivity">
 
     <!-- ĐÂY CHÍNH LÀ @RenderBody() CỦA ANDROID -->
@@ -16,15 +16,16 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/bottom_navigation" />
 
-    <!-- Thanh Menu dùng chung cho mọi màn hình (Như Footer của Website) -->
+    <!-- Thanh Menu dùng chung cho mọi màn hình -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FFFFFF"
+        android:background="@color/bg_card"
+        app:itemIconTint="@color/icon_color"
+        app:itemTextColor="@color/text_secondary"
+        app:itemActiveIndicatorStyle="@null"
         app:elevation="16dp"
-        app:itemIconTint="#A0AEC0"
-        app:itemTextColor="#A0AEC0"
         app:layout_constraintBottom_toBottomOf="parent"
         app:menu="@menu/bottom_nav_menu" />
 
