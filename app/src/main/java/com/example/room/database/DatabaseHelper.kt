@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import com.example.room.model.Apartment
 import com.example.room.model.User
 
 class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "QuanLyCanHo.db", null, 1) {
@@ -71,5 +72,39 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "QuanLyCanHo.
         }
         cursor.close()
         return user
+    }
+
+    fun insertApartment(apartment: Apartment): Long {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put("title", apartment.title)
+            put("price", apartment.price)
+            put("address", apartment.address)
+            put("id_user", apartment.id_user)
+        }
+        return db.insert("apartments", null, values)
+    }
+
+    // 2. Hàm Lấy danh sách toàn bộ căn hộ để hiển thị lên màn hình
+    fun getAllApartments(): ArrayList<Apartment> {
+        val list = ArrayList<Apartment>()
+        val db = readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM apartments", null)
+
+        if (cursor.moveToFirst()) {
+            do {
+                list.add(
+                    Apartment(
+                        id = cursor.getInt(0),
+                        title = cursor.getString(1),
+                        price = cursor.getDouble(2),
+                        address = cursor.getString(3),
+                        id_user = cursor.getInt(4)
+                    )
+                )
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        return list
     }
 }
