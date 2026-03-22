@@ -19,8 +19,8 @@ class RegisterActivity : AppCompatActivity() {
         dbHelper = DatabaseHelper(this)
 
         val edtFullName = findViewById<EditText>(R.id.edtFullName)
-        val edtUsername = findViewById<EditText>(R.id.edtRegisterUsername)
-        val edtPassword = findViewById<EditText>(R.id.edtRegisterPassword)
+        val edtUsername = findViewById<EditText>(R.id.edtRegUsername)
+        val edtPassword = findViewById<EditText>(R.id.edtRegPassword)
         val btnRegister = findViewById<Button>(R.id.btnRegister)
 
         btnRegister.setOnClickListener {
