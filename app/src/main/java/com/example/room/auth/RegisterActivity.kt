@@ -1,10 +1,11 @@
-package com.example.room
+package com.example.room.auth
 
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.room.R
 import com.example.room.database.DatabaseHelper
 import com.example.room.model.User
 
