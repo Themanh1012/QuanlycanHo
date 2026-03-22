@@ -37,7 +37,7 @@
         android:layout_height="55dp"
         android:text="@string/admin_btn_logout"
         android:backgroundTint="#757575"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/bg_card"
         android:textStyle="bold"/>
 
 </LinearLayout>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Nút Trang chủ / Khám phá -->
+    <item
+        android:id="@+id/nav_home"
+        android:icon="@android:drawable/ic_menu_compass"
+        android:title="Khám phá" />
+
+    <!-- Nút Căn hộ đã lưu -->
+    <item
+        android:id="@+id/nav_saved"
+        android:icon="@android:drawable/ic_menu_recent_history"
+        android:title="Đã lưu" />
+
+    <!-- Nút Quản lý tài khoản cá nhân -->
+    <item
+        android:id="@+id/nav_profile"
+        android:icon="@android:drawable/ic_menu_info_details"
+        android:title="Tài khoản" />
+
+</menu>
