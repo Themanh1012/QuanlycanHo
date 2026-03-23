@@ -10,11 +10,11 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.example.room.MainActivity
 import com.example.room.R
-import com.example.room.auth.RegisterActivity
-import com.example.room.admin.ManageUserActivity
+import com.example.room.admin.AdminDashboardActivity
 import com.example.room.database.DatabaseHelper
 
 class LoginActivity : AppCompatActivity() {
+
     private lateinit var dbHelper: DatabaseHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,41 +26,55 @@ class LoginActivity : AppCompatActivity() {
 
         val edtUsername = findViewById<EditText>(R.id.edtUsername)
         val edtPassword = findViewById<EditText>(R.id.edtPassword)
-        val btnLogin = findViewById<Button> (R.id.btnLogin)
-        val tvGoToRegister =findViewById<TextView>(R.id.tvGoToRegister)
+        val btnLogin = findViewById<Button>(R.id.btnLogin)
+        val tvGoToRegister = findViewById<TextView>(R.id.tvGoToRegister)
 
         btnLogin.setOnClickListener {
             val username = edtUsername.text.toString().trim()
             val password = edtPassword.text.toString().trim()
 
-            if(username.isEmpty() || password.isEmpty()){
+            if (username.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "Vui lòng nhập đủ thông tin!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
             val user = dbHelper.checkLogin(username, password)
 
-            if(user != null){
-                if(user.role == 1){
-                    Toast.makeText(this, "Chào Admin: ${user.fullName}" , Toast.LENGTH_SHORT).show()
-                    val intent= Intent(this, ManageUserActivity::class.java)
-                    startActivity(intent)
-                    finish()
-                }else if(user.role == 2){
-                    Toast.makeText(this, "Chào khách hàng : ${user.fullName}", Toast.LENGTH_SHORT).show()
-                //CUSSTOMER NHớ LÀM
-                    val intent = Intent(this, MainActivity::class.java)
-                    startActivity(intent)
-                    finish()
-                }else{
-                    Toast.makeText(this, "Sai tài khoản hoặc mật khẩu", Toast.LENGTH_SHORT).show()
+            if (user != null) {
+                // Lưu thông tin đăng nhập vào SharedPreferences
+                val sharedPref = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+                sharedPref.edit().apply {
+                    putInt("USER_ID", user.id)
+                    putString("USERNAME", user.username)
+                    putString("FULL_NAME", user.fullName)
+                    putInt("ROLE", user.role)
+                    putBoolean("IS_LOGGED_IN", true)
+                    apply()
                 }
+
+                if (user.role == 1) {
+                    // Admin - chuyển đến Dashboard
+                    Toast.makeText(this, "Chào Admin: ${user.fullName}", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this, AdminDashboardActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+                    finish()
+                } else if (user.role == 2) {
+                    // Khách hàng - chuyển đến MainActivity
+                    Toast.makeText(this, "Chào ${user.fullName}", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this, MainActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+                    finish()
+                }
+            } else {
+                Toast.makeText(this, "Sai tài khoản hoặc mật khẩu!", Toast.LENGTH_SHORT).show()
             }
         }
+
         tvGoToRegister.setOnClickListener {
             val intent = Intent(this, RegisterActivity::class.java)
             startActivity(intent)
         }
-
     }
 }

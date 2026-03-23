@@ -1,6 +1,7 @@
 package com.example.room
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -8,17 +9,33 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
+import com.example.room.auth.LoginActivity
 import com.example.room.fragment.HomeFragment
 import com.example.room.fragment.ProfileFragment
 import com.example.room.fragment.SavedFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // KIỂM TRA ĐĂNG NHẬP - Nếu chưa đăng nhập thì chuyển về LoginActivity
+        val sharedPref = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+        val isLoggedIn = sharedPref.getBoolean("IS_LOGGED_IN", false)
+
+        if (!isLoggedIn) {
+            val intent = Intent(this, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()
+            return
+        }
+
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
+
+        // Dark mode setting
         val sharedPreferences = getSharedPreferences("AppConfig", Context.MODE_PRIVATE)
         val isDarkMode = sharedPreferences.getBoolean("isDarkMode", false)
         if (isDarkMode) {
@@ -26,7 +43,6 @@ class MainActivity : AppCompatActivity() {
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
-
 
         // Căn chỉnh giao diện để không lẹm vào Status bar
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.fragment_container)) { v, insets ->
@@ -37,14 +53,17 @@ class MainActivity : AppCompatActivity() {
 
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_navigation)
 
-        // Mặc định khi vừa mở MainActivity lên, sẽ nạp HomeFragment (Trang chủ) vào đầu tiên
+
+        val userName = sharedPref.getString("FULL_NAME", "Khách")
+
+
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, HomeFragment())
                 .commit()
         }
 
-        // Bắt sự kiện khi click vào các nút ở thanh menu dưới cùng
+
         bottomNav.setOnItemSelectedListener { item ->
             var selectedFragment: Fragment? = null
 

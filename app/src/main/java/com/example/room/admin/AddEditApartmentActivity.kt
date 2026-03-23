@@ -1,189 +1,325 @@
-package com.example.quanlycanho.admin
+package com.example.room.admin
 
+import android.Manifest
+import android.app.Activity
 import android.content.Intent
-import android.graphics.Bitmap
+import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
-import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
-import android.widget.*
+import android.view.View
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.example.quanlycanho.R
-import com.example.quanlycanho.database.DatabaseHelper
-import com.example.quanlycanho.model.Apartment
-import com.google.android.material.button.MaterialButton
+import androidx.cardview.widget.CardView
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import com.example.room.R
+import com.example.room.database.DatabaseHelper
+import com.example.room.model.Apartment
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
 
 class AddEditApartmentActivity : AppCompatActivity() {
 
-    private lateinit var databaseHelper: DatabaseHelper
-    private lateinit var ivApartmentImage: ImageView
-    private lateinit var etName: EditText
-    private lateinit var etAddress: EditText
-    private lateinit var etPrice: EditText
-    private lateinit var etArea: EditText
-    private lateinit var etBedrooms: EditText
-    private lateinit var etBathrooms: EditText
-    private lateinit var etDescription: EditText
-    private lateinit var spinnerStatus: Spinner
-    private lateinit var btnSave: MaterialButton
-    private lateinit var ivBack: ImageView
-
-    private var apartmentId: Long = -1
+    private lateinit var dbHelper: DatabaseHelper
+    private var apartmentId: Int = 0
+    private var isEditMode = false
     private var selectedImagePath: String = ""
-    private val PICK_IMAGE_REQUEST = 1
+
+    // Views
+    private lateinit var tvTitle: TextView
+    private lateinit var edtTitle: EditText
+    private lateinit var edtPrice: EditText
+    private lateinit var edtAddress: EditText
+    private lateinit var edtDescription: EditText
+    private lateinit var edtArea: EditText
+    private lateinit var imgApartment: ImageView
+    private lateinit var layoutPlaceholder: LinearLayout
+    private lateinit var btnChangeImage: TextView
+    private lateinit var cardImageUpload: CardView
+    private lateinit var btnDelete: Button
+    private lateinit var btnSave: TextView
+
+    companion object {
+        private const val PICK_IMAGE_REQUEST = 1001
+        private const val PERMISSION_REQUEST_CODE = 1002
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_edit_apartment)
 
-        databaseHelper = DatabaseHelper(this)
+        dbHelper = DatabaseHelper(this)
 
         initViews()
-        setupSpinner()
-        checkEditMode()
-        setupListeners()
+        checkMode()
+        setupClickListeners()
     }
 
     private fun initViews() {
-        ivApartmentImage = findViewById(R.id.ivApartmentImage)
-        etName = findViewById(R.id.etName)
-        etAddress = findViewById(R.id.etAddress)
-        etPrice = findViewById(R.id.etPrice)
-        etArea = findViewById(R.id.etArea)
-        etBedrooms = findViewById(R.id.etBedrooms)
-        etBathrooms = findViewById(R.id.etBathrooms)
-        etDescription = findViewById(R.id.etDescription)
-        spinnerStatus = findViewById(R.id.spinnerStatus)
+        tvTitle = findViewById(R.id.tvTitle)
+        edtTitle = findViewById(R.id.edtTitle)
+        edtPrice = findViewById(R.id.edtPrice)
+        edtAddress = findViewById(R.id.edtAddress)
+        edtDescription = findViewById(R.id.edtDescription)
+        edtArea = findViewById(R.id.edtArea)
+        imgApartment = findViewById(R.id.imgApartment)
+        layoutPlaceholder = findViewById(R.id.layoutPlaceholder)
+        btnChangeImage = findViewById(R.id.btnChangeImage)
+        cardImageUpload = findViewById(R.id.cardImageUpload)
+        btnDelete = findViewById(R.id.btnDelete)
         btnSave = findViewById(R.id.btnSave)
-        ivBack = findViewById(R.id.ivBack)
     }
 
-    private fun setupSpinner() {
-        val statusOptions = arrayOf("available", "occupied")
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, statusOptions)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinnerStatus.adapter = adapter
-    }
+    private fun checkMode() {
+        isEditMode = intent.getStringExtra("mode") == "edit"
+        apartmentId = intent.getIntExtra("apartmentId", 0)
 
-    private fun checkEditMode() {
-        apartmentId = intent.getLongExtra("APARTMENT_ID", -1)
-        if (apartmentId != -1L) {
-            title = "Chỉnh sửa căn hộ"
+        if (isEditMode && apartmentId > 0) {
+            tvTitle.text = "Sửa căn hộ"
+            btnDelete.visibility = View.VISIBLE
             loadApartmentData()
         } else {
-            title = "Thêm căn hộ mới"
+            tvTitle.text = "Thêm căn hộ mới"
+            btnDelete.visibility = View.GONE
+            // RESET selectedImagePath khi thêm mới
+            selectedImagePath = ""
         }
     }
 
     private fun loadApartmentData() {
-        val apartment = databaseHelper.getApartmentById(apartmentId)
+        val apartment = dbHelper.getApartmentById(apartmentId)
         apartment?.let {
-            etName.setText(it.name)
-            etAddress.setText(it.address)
-            etPrice.setText(it.price.toString())
-            etArea.setText(it.area.toString())
-            etBedrooms.setText(it.bedrooms.toString())
-            etBathrooms.setText(it.bathrooms.toString())
-            etDescription.setText(it.description)
-            spinnerStatus.setSelection(if (it.status == "available") 0 else 1)
-            selectedImagePath = it.imagePath
+            edtTitle.setText(it.title)
+            edtPrice.setText(it.price.toLong().toString())
+            edtAddress.setText(it.address)
+            edtDescription.setText(it.description)
+            edtArea.setText(if (it.area > 0) it.area.toLong().toString() else "")
 
             if (it.imagePath.isNotEmpty()) {
-                val imgFile = File(it.imagePath)
-                if (imgFile.exists()) {
-                    val bitmap = BitmapFactory.decodeFile(it.imagePath)
-                    ivApartmentImage.setImageBitmap(bitmap)
-                }
+                selectedImagePath = it.imagePath
+                loadImage(it.imagePath)
             }
         }
     }
 
-    private fun setupListeners() {
-        ivBack.setOnClickListener { finish() }
+    private fun loadImage(path: String) {
+        try {
+            val imgFile = File(path)
+            if (imgFile.exists()) {
+                val bitmap = BitmapFactory.decodeFile(imgFile.absolutePath)
+                if (bitmap != null) {
+                    imgApartment.setImageBitmap(bitmap)
+                    imgApartment.visibility = View.VISIBLE
+                    layoutPlaceholder.visibility = View.GONE
+                    btnChangeImage.visibility = View.VISIBLE
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(this, "Không thể tải ảnh", Toast.LENGTH_SHORT).show()
+        }
+    }
 
-        ivApartmentImage.setOnClickListener {
-            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            startActivityForResult(intent, PICK_IMAGE_REQUEST)
+    private fun setupClickListeners() {
+        findViewById<ImageView>(R.id.btnBack).setOnClickListener {
+            finish()
         }
 
         btnSave.setOnClickListener {
             saveApartment()
         }
+
+        cardImageUpload.setOnClickListener {
+            checkPermissionAndOpenPicker()
+        }
+
+        btnChangeImage.setOnClickListener {
+            checkPermissionAndOpenPicker()
+        }
+
+        btnDelete.setOnClickListener {
+            showDeleteDialog()
+        }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
-            val selectedImageUri: Uri? = data.data
-            selectedImageUri?.let {
-                ivApartmentImage.setImageURI(it)
-                selectedImagePath = saveImageToInternalStorage(it)
+    private fun checkPermissionAndOpenPicker() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // Android 13+
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES)
+                != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.READ_MEDIA_IMAGES),
+                    PERMISSION_REQUEST_CODE
+                )
+            } else {
+                openImagePicker()
+            }
+        } else {
+            // Android 12 and below
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                    PERMISSION_REQUEST_CODE
+                )
+            } else {
+                openImagePicker()
             }
         }
     }
 
-    private fun saveImageToInternalStorage(uri: Uri): String {
-        val inputStream: InputStream? = contentResolver.openInputStream(uri)
-        val bitmap = BitmapFactory.decodeStream(inputStream)
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                openImagePicker()
+            } else {
+                Toast.makeText(this, "Cần cấp quyền truy cập ảnh!", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
-        val fileName = "apartment_${System.currentTimeMillis()}.jpg"
-        val file = File(filesDir, fileName)
+    private fun openImagePicker() {
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = "image/*"
+        startActivityForResult(intent, PICK_IMAGE_REQUEST)
+    }
 
-        val outputStream = FileOutputStream(file)
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, outputStream)
-        outputStream.flush()
-        outputStream.close()
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null) {
+            val uri = data.data
+            uri?.let {
+                try {
+                    val inputStream: InputStream? = contentResolver.openInputStream(it)
+                    inputStream?.let { stream ->
+                        // Tạo file mới với tên unique
+                        val fileName = "apartment_${System.currentTimeMillis()}.jpg"
+                        val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
 
-        return file.absolutePath
+                        // Tạo thư mục nếu chưa có
+                        if (!storageDir!!.exists()) {
+                            storageDir.mkdirs()
+                        }
+
+                        val file = File(storageDir, fileName)
+                        val outputStream = FileOutputStream(file)
+
+                        // Copy dữ liệu
+                        val buffer = ByteArray(1024)
+                        var length: Int
+                        while (stream.read(buffer).also { len -> length = len } > 0) {
+                            outputStream.write(buffer, 0, length)
+                        }
+
+                        stream.close()
+                        outputStream.flush()
+                        outputStream.close()
+
+                        selectedImagePath = file.absolutePath
+
+                        // Hiển thị ảnh
+                        val bitmap = BitmapFactory.decodeFile(selectedImagePath)
+                        imgApartment.setImageBitmap(bitmap)
+                        imgApartment.visibility = View.VISIBLE
+                        layoutPlaceholder.visibility = View.GONE
+                        btnChangeImage.visibility = View.VISIBLE
+
+                        Toast.makeText(this, "Đã chọn ảnh", Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Toast.makeText(this, "Lỗi khi lưu ảnh: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
     private fun saveApartment() {
-        val name = etName.text.toString().trim()
-        val address = etAddress.text.toString().trim()
-        val priceStr = etPrice.text.toString().trim()
-        val areaStr = etArea.text.toString().trim()
-        val bedroomsStr = etBedrooms.text.toString().trim()
-        val bathroomsStr = etBathrooms.text.toString().trim()
-        val description = etDescription.text.toString().trim()
-        val status = spinnerStatus.selectedItem.toString()
+        val title = edtTitle.text.toString().trim()
+        val priceStr = edtPrice.text.toString().trim()
+        val address = edtAddress.text.toString().trim()
+        val description = edtDescription.text.toString().trim()
+        val areaStr = edtArea.text.toString().trim()
 
-        if (name.isEmpty() || address.isEmpty() || priceStr.isEmpty()) {
-            Toast.makeText(this, "Vui lòng điền đầy đủ thông tin", Toast.LENGTH_SHORT).show()
+        if (title.isEmpty()) {
+            Toast.makeText(this, "Vui lòng nhập tiêu đề!", Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (priceStr.isEmpty()) {
+            Toast.makeText(this, "Vui lòng nhập giá thuê!", Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (address.isEmpty()) {
+            Toast.makeText(this, "Vui lòng nhập địa chỉ!", Toast.LENGTH_SHORT).show()
             return
         }
 
         val price = priceStr.toDoubleOrNull() ?: 0.0
         val area = areaStr.toDoubleOrNull() ?: 0.0
-        val bedrooms = bedroomsStr.toIntOrNull() ?: 0
-        val bathrooms = bathroomsStr.toIntOrNull() ?: 0
 
+        // THÊM status
         val apartment = Apartment(
             id = apartmentId,
-            name = name,
-            address = address,
+            title = title,
             price = price,
-            area = area,
-            bedrooms = bedrooms,
-            bathrooms = bathrooms,
+            address = address,
             description = description,
-            status = status,
-            imagePath = selectedImagePath
+            area = area,
+            imagePath = selectedImagePath,
+            status = "Còn trống",
+            id_user = 1
         )
 
-        val success = if (apartmentId == -1L) {
-            databaseHelper.addApartment(apartment) > 0
+        val result = if (isEditMode) {
+            dbHelper.updateApartment(apartment)
         } else {
-            databaseHelper.updateApartment(apartment)
+            dbHelper.insertApartment(apartment).toInt()
         }
 
-        if (success) {
-            Toast.makeText(this, if (apartmentId == -1L) "Đã thêm căn hộ" else "Đã cập nhật căn hộ", Toast.LENGTH_SHORT).show()
+        if (result > 0) {
+            Toast.makeText(
+                this,
+                if (isEditMode) "Cập nhật thành công!" else "Thêm căn hộ thành công!",
+                Toast.LENGTH_SHORT
+            ).show()
             finish()
         } else {
-            Toast.makeText(this, "Lỗi lưu căn hộ", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Thất bại, vui lòng thử lại!", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun showDeleteDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Xác nhận xóa")
+            .setMessage("Bạn có chắc muốn xóa căn hộ này?")
+            .setPositiveButton("Xóa") { dialog, _ ->
+                val result = dbHelper.deleteApartment(apartmentId)
+                if (result > 0) {
+                    Toast.makeText(this, "Đã xóa căn hộ!", Toast.LENGTH_SHORT).show()
+                    finish()
+                } else {
+                    Toast.makeText(this, "Xóa thất bại!", Toast.LENGTH_SHORT).show()
+                }
+                dialog.dismiss()
+            }
+            .setNegativeButton("Hủy", null)
+            .show()
     }
 }

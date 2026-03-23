@@ -8,5 +8,6 @@ data class Apartment(
     val description: String = "",
     val area: Double = 0.0,
     val imagePath: String = "",
-    val id_user: Int
+    val status: String = "Còn trống",
+    val id_user: Int = 0
 )
