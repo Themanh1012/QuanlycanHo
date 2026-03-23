@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import com.example.room.model.Apartment
 import com.example.room.model.User
 
-class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "QuanLyCanHo.db", null, 3) {
+class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "QuanLyCanHo.db", null, 4) {
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL("""
@@ -25,18 +25,36 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "QuanLyCanHo.
             )
         """.trimIndent())
 
-        db.execSQL("INSERT INTO users VALUES (null, 'admin', '123', 'Quản trị viên', 1)")
-        db.execSQL("INSERT INTO users VALUES (null, 'khach', '123', 'Khách hàng', 2)")
+        // Insert default users
+        insertDefaultUsers(db)
+    }
+
+    private fun insertDefaultUsers(db: SQLiteDatabase) {
+        // Check and insert admin if not exists
+        val cursor = db.rawQuery("SELECT * FROM users WHERE username = 'admin'", null)
+        if (!cursor.moveToFirst()) {
+            db.execSQL("INSERT INTO users (username, password, fullName, role) VALUES ('admin', '123', 'Quản trị viên', 1)")
+        }
+        cursor.close()
+
+        // Check and insert khach if not exists
+        val cursor2 = db.rawQuery("SELECT * FROM users WHERE username = 'khach'", null)
+        if (!cursor2.moveToFirst()) {
+            db.execSQL("INSERT INTO users (username, password, fullName, role) VALUES ('khach', '123', 'Khách hàng', 2)")
+        }
+        cursor2.close()
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        // Upgrade an toàn - thêm cột status nếu chưa có
         if (oldVersion < 3) {
             try {
                 db.execSQL("ALTER TABLE apartments ADD COLUMN status TEXT DEFAULT 'Còn trống'")
             } catch (e: Exception) {
                 e.printStackTrace()
             }
+        }
+        if (oldVersion < 4) {
+            insertDefaultUsers(db)
         }
     }
 
@@ -49,28 +67,85 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "QuanLyCanHo.
         put("role", user.role)
     })
 
-    fun checkLogin(username: String, password: String): User? = readableDatabase.rawQuery(
-        "SELECT * FROM users WHERE username=? AND password=?", arrayOf(username, password)
-    ).use {
-        if (it.moveToFirst()) User(it.getInt(0), it.getString(1), it.getString(2), it.getString(3), it.getInt(4))
-        else null
-    }
-
-    fun getAllUsers(): ArrayList<User> = ArrayList<User>().apply {
-        readableDatabase.rawQuery("SELECT * FROM users ORDER BY id DESC", null).use {
-            if (it.moveToFirst()) do {
-                add(User(it.getInt(0), it.getString(1), it.getString(2), it.getString(3), it.getInt(4)))
-            } while (it.moveToNext())
+    fun checkLogin(username: String, password: String): User? {
+        return try {
+            readableDatabase.rawQuery(
+                "SELECT * FROM users WHERE username=? AND password=?", arrayOf(username, password)
+            ).use {
+                if (it.moveToFirst()) User(it.getInt(0), it.getString(1), it.getString(2), it.getString(3), it.getInt(4))
+                else null
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
         }
     }
 
-    fun getUserById(id: Int): User? = readableDatabase.rawQuery(
-        "SELECT * FROM users WHERE id=?", arrayOf(id.toString())
-    ).use {
-        if (it.moveToFirst()) User(it.getInt(0), it.getString(1), it.getString(2), it.getString(3), it.getInt(4))
-        else null
+    fun getAllUsers(): ArrayList<User> = ArrayList<User>().apply {
+        try {
+            readableDatabase.rawQuery("SELECT * FROM users ORDER BY id DESC", null).use {
+                if (it.moveToFirst()) do {
+                    add(User(it.getInt(0), it.getString(1), it.getString(2), it.getString(3), it.getInt(4)))
+                } while (it.moveToNext())
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
+    fun getUserById(id: Int): User? {
+        return try {
+            readableDatabase.rawQuery(
+                "SELECT * FROM users WHERE id=?", arrayOf(id.toString())
+            ).use {
+                if (it.moveToFirst()) User(it.getInt(0), it.getString(1), it.getString(2), it.getString(3), it.getInt(4))
+                else null
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+//PASSWORD
+    fun changePassword(userId: Int, newPassword: String): Int {
+        val db = this.writableDatabase
+        val contentValues = ContentValues()
+        contentValues.put("password", newPassword)
+
+        return db.update(
+            "users",
+            contentValues,
+            "id = ?",
+            arrayOf(userId.toString())
+        )
+    }
+    fun checkPassword(userId: Int, password: String): Boolean {
+        return try {
+            readableDatabase.rawQuery(
+                "SELECT * FROM users WHERE id=? AND password=?",
+                arrayOf(userId.toString(), password)
+            ).use { it.moveToFirst() }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
+    fun getOccupiedApartmentsCount(): Int = readableDatabase.rawQuery(
+        "SELECT COUNT(*) FROM apartments WHERE status = 'Đã thuê'", null
+    ).use { if (it.moveToFirst()) it.getInt(0) else 0 }
+    fun updateUserInfo(userId: Int, fullName: String, role: Int): Int {
+        val db = this.writableDatabase
+        val contentValues = ContentValues()
+        contentValues.put("fullName", fullName)
+        contentValues.put("role", role)
+
+        return db.update(
+            "users",
+            contentValues,
+            "id = ?",  // Đổi từ user_id thành id
+            arrayOf(userId.toString())
+        )
+    }
     fun updateUser(user: User): Int = writableDatabase.update("users", ContentValues().apply {
         put("username", user.username)
         put("password", user.password)
@@ -78,40 +153,12 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "QuanLyCanHo.
         put("role", user.role)
     }, "id=?", arrayOf(user.id.toString()))
 
-    fun updateUserInfo(id: Int, fullName: String, role: Int): Int = writableDatabase.update(
-        "users", ContentValues().apply {
-            put("fullName", fullName)
-            put("role", role)
-        }, "id=?", arrayOf(id.toString())
-    )
-
-    fun changePassword(id: Int, newPassword: String): Int = writableDatabase.update(
-        "users", ContentValues().apply { put("password", newPassword) },
-        "id=?", arrayOf(id.toString())
-    )
-
-    fun checkPassword(id: Int, oldPassword: String): Boolean = readableDatabase.rawQuery(
-        "SELECT * FROM users WHERE id=? AND password=?", arrayOf(id.toString(), oldPassword)
-    ).use { it.moveToFirst() }
-
     fun deleteUser(id: Int): Int {
         writableDatabase.delete("apartments", "id_user=?", arrayOf(id.toString()))
         return writableDatabase.delete("users", "id=?", arrayOf(id.toString()))
     }
 
-    fun getTotalUsers(): Int = readableDatabase.rawQuery("SELECT COUNT(*) FROM users", null).use {
-        if (it.moveToFirst()) it.getInt(0) else 0
-    }
-
-    fun getAdminCount(): Int = readableDatabase.rawQuery("SELECT COUNT(*) FROM users WHERE role=1", null).use {
-        if (it.moveToFirst()) it.getInt(0) else 0
-    }
-
-    fun getCustomerCount(): Int = readableDatabase.rawQuery("SELECT COUNT(*) FROM users WHERE role=2", null).use {
-        if (it.moveToFirst()) it.getInt(0) else 0
-    }
-
-    // =============== APARTMENTS ===============
+//CAN HO
 
     fun insertApartment(apartment: Apartment): Long = writableDatabase.insert("apartments", null, ContentValues().apply {
         put("title", apartment.title)
@@ -125,9 +172,33 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "QuanLyCanHo.
     })
 
     fun getAllApartments(): ArrayList<Apartment> = ArrayList<Apartment>().apply {
-        readableDatabase.rawQuery("SELECT * FROM apartments ORDER BY id DESC", null).use {
-            if (it.moveToFirst()) do {
-                add(Apartment(
+        try {
+            readableDatabase.rawQuery("SELECT * FROM apartments ORDER BY id DESC", null).use {
+                if (it.moveToFirst()) do {
+                    add(Apartment(
+                        it.getInt(0),
+                        it.getString(1),
+                        it.getDouble(2),
+                        it.getString(3),
+                        it.getString(4) ?: "",
+                        it.getDouble(5),
+                        it.getString(6) ?: "",
+                        it.getString(7) ?: "Còn trống",
+                        if (it.columnCount > 8) it.getInt(8) else 0
+                    ))
+                } while (it.moveToNext())
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    fun getApartmentById(id: Int): Apartment? {
+        return try {
+            readableDatabase.rawQuery(
+                "SELECT * FROM apartments WHERE id=?", arrayOf(id.toString())
+            ).use {
+                if (it.moveToFirst()) Apartment(
                     it.getInt(0),
                     it.getString(1),
                     it.getDouble(2),
@@ -137,26 +208,13 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "QuanLyCanHo.
                     it.getString(6) ?: "",
                     it.getString(7) ?: "Còn trống",
                     if (it.columnCount > 8) it.getInt(8) else 0
-                ))
-            } while (it.moveToNext())
+                )
+                else null
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
         }
-    }
-
-    fun getApartmentById(id: Int): Apartment? = readableDatabase.rawQuery(
-        "SELECT * FROM apartments WHERE id=?", arrayOf(id.toString())
-    ).use {
-        if (it.moveToFirst()) Apartment(
-            it.getInt(0),
-            it.getString(1),
-            it.getDouble(2),
-            it.getString(3),
-            it.getString(4) ?: "",
-            it.getDouble(5),
-            it.getString(6) ?: "",
-            it.getString(7) ?: "Còn trống",
-            if (it.columnCount > 8) it.getInt(8) else 0
-        )
-        else null
     }
 
     fun updateApartment(apartment: Apartment): Int = writableDatabase.update("apartments", ContentValues().apply {
@@ -176,68 +234,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "QuanLyCanHo.
         if (it.moveToFirst()) it.getInt(0) else 0
     }
 
-    fun getOccupiedApartmentsCount(): Int = readableDatabase.rawQuery(
-        "SELECT COUNT(*) FROM apartments WHERE status = 'Đã thuê'", null
-    ).use { if (it.moveToFirst()) it.getInt(0) else 0 }
-
     fun getAvailableApartmentsCount(): Int = readableDatabase.rawQuery(
         "SELECT COUNT(*) FROM apartments WHERE status = 'Còn trống'", null
     ).use { if (it.moveToFirst()) it.getInt(0) else 0 }
-
-    fun getApartmentsByPriceRange(minPrice: Double, maxPrice: Double): ArrayList<Apartment> = ArrayList<Apartment>().apply {
-        readableDatabase.rawQuery(
-            "SELECT * FROM apartments WHERE price BETWEEN ? AND ? ORDER BY price ASC",
-            arrayOf(minPrice.toString(), maxPrice.toString())
-        ).use {
-            if (it.moveToFirst()) do {
-                add(Apartment(
-                    it.getInt(0), it.getString(1), it.getDouble(2), it.getString(3),
-                    it.getString(4) ?: "", it.getDouble(5), it.getString(6) ?: "",
-                    it.getString(7) ?: "Còn trống", if (it.columnCount > 8) it.getInt(8) else 0
-                ))
-            } while (it.moveToNext())
-        }
-    }
-
-    fun getApartmentsByAreaRange(minArea: Double, maxArea: Double): ArrayList<Apartment> = ArrayList<Apartment>().apply {
-        readableDatabase.rawQuery(
-            "SELECT * FROM apartments WHERE area BETWEEN ? AND ? ORDER BY area ASC",
-            arrayOf(minArea.toString(), maxArea.toString())
-        ).use {
-            if (it.moveToFirst()) do {
-                add(Apartment(
-                    it.getInt(0), it.getString(1), it.getDouble(2), it.getString(3),
-                    it.getString(4) ?: "", it.getDouble(5), it.getString(6) ?: "",
-                    it.getString(7) ?: "Còn trống", if (it.columnCount > 8) it.getInt(8) else 0
-                ))
-            } while (it.moveToNext())
-        }
-    }
-
-    fun searchApartments(query: String): ArrayList<Apartment> = ArrayList<Apartment>().apply {
-        readableDatabase.rawQuery(
-            "SELECT * FROM apartments WHERE title LIKE ? OR address LIKE ? ORDER BY id DESC",
-            arrayOf("%$query%", "%$query%")
-        ).use {
-            if (it.moveToFirst()) do {
-                add(Apartment(
-                    it.getInt(0), it.getString(1), it.getDouble(2), it.getString(3),
-                    it.getString(4) ?: "", it.getDouble(5), it.getString(6) ?: "",
-                    it.getString(7) ?: "Còn trống", if (it.columnCount > 8) it.getInt(8) else 0
-                ))
-            } while (it.moveToNext())
-        }
-    }
-
-    fun getAveragePrice(): Double = readableDatabase.rawQuery("SELECT AVG(price) FROM apartments", null).use {
-        if (it.moveToFirst()) it.getDouble(0) else 0.0
-    }
-
-    fun getMinPrice(): Double = readableDatabase.rawQuery("SELECT MIN(price) FROM apartments WHERE price > 0", null).use {
-        if (it.moveToFirst()) it.getDouble(0) else 0.0
-    }
-
-    fun getMaxPrice(): Double = readableDatabase.rawQuery("SELECT MAX(price) FROM apartments", null).use {
-        if (it.moveToFirst()) it.getDouble(0) else 0.0
-    }
 }

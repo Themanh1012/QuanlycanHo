@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/dark_bg_main"
+    android:background="@color/bg_main"
     android:orientation="vertical"
     tools:context=".admin.ManageApartmentsActivity">
 
@@ -13,17 +13,17 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/dark_bg_header"
+        android:background="@color/bg_card"
         android:orientation="horizontal"
         android:padding="16dp"
         android:gravity="center_vertical">
 
         <ImageView
-            android:id="@+id/btnBack"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
+            android:id="@+id/ivBack"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:src="@android:drawable/ic_menu_revert"
-            android:tint="@color/dark_text_primary" />
+            android:tint="@color/text_primary" />
 
         <TextView
             android:layout_width="0dp"
@@ -31,99 +31,66 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="Quản lý căn hộ"
-            android:textColor="@color/dark_text_primary"
+            android:textColor="@color/text_primary"
             android:textSize="20sp"
             android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/tvApartmentCount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_circle"
-            android:gravity="center"
-            android:paddingHorizontal="12dp"
-            android:paddingVertical="6dp"
-            android:text="0"
-            android:textColor="@color/dark_text_primary"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+        <View
+            android:layout_width="32dp"
+            android:layout_height="32dp" />
     </LinearLayout>
 
-    <!-- Search Bar -->
+    <!-- Search -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/bg_search_dark"
-        android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingHorizontal="12dp">
-
-        <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:src="@android:drawable/ic_menu_search"
-            android:tint="@color/dark_text_secondary" />
+        android:padding="16dp"
+        android:background="@color/bg_card"
+        android:layout_marginTop="1dp">
 
         <EditText
-            android:id="@+id/edtSearch"
-            android:layout_width="match_parent"
+            android:id="@+id/etSearchApartment"
+            android:layout_width="0dp"
             android:layout_height="48dp"
-            android:background="@null"
+            android:layout_weight="1"
             android:hint="Tìm kiếm căn hộ..."
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
-            android:textColor="@color/dark_text_primary"
-            android:textColorHint="@color/dark_text_secondary"
-            android:textSize="14sp" />
+            android:textColorHint="@color/text_secondary"
+            android:textColor="@color/text_primary"
+            android:background="@android:color/transparent"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:singleLine="true" />
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:src="@android:drawable/ic_menu_search"
+            android:tint="@color/text_secondary" />
     </LinearLayout>
 
     <!-- Apartment List -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewApartments"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:layout_weight="1"
-        android:clipToPadding="false"
-        android:paddingBottom="100dp" />
+        android:layout_weight="1">
 
-    <!-- Empty State -->
-    <LinearLayout
-        android:id="@+id/layoutEmpty"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:visibility="gone">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvApartments"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="8dp" />
 
-        <ImageView
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:src="@android:drawable/ic_dialog_map"
-            android:tint="@color/dark_text_secondary" />
-
-        <TextView
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabAddApartment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Chưa có căn hộ nào"
-            android:textColor="@color/dark_text_secondary"
-            android:textSize="16sp" />
-    </LinearLayout>
-
-    <!-- FAB Add Button -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabAdd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="20dp"
-        android:backgroundTint="@color/dark_btn_primary"
-        android:src="@android:drawable/ic_menu_add"
-        android:tint="@color/dark_text_primary"
-        app:fabSize="normal" />
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:src="@android:drawable/ic_input_add"
+            app:backgroundTint="@color/colorPrimary"
+            app:tint="@color/text_primary" />
+    </FrameLayout>
 
 </LinearLayout>
