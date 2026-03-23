@@ -9,5 +9,5 @@ data class Apartment(
     val area: Double = 0.0,
     val imagePath: String = "",
     val status: String = "Còn trống",
-    val id_user: Int = 0
+    val id_user: Int
 )

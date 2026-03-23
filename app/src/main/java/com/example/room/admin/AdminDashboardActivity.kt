@@ -2,10 +2,7 @@ package com.example.room.admin
 
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.widget.Button
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -23,7 +20,6 @@ class AdminDashboardActivity : AppCompatActivity() {
     private lateinit var tvTotalApartments: TextView
     private lateinit var tvAvailableCount: TextView
     private lateinit var tvRentedCount: TextView
-    private lateinit var etSearch: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +30,6 @@ class AdminDashboardActivity : AppCompatActivity() {
         initViews()
         loadData()
         setupClickListeners()
-        setupSearch()
     }
 
     override fun onResume() {
@@ -47,34 +42,23 @@ class AdminDashboardActivity : AppCompatActivity() {
         tvTotalApartments = findViewById(R.id.tvTotalApartments)
         tvAvailableCount = findViewById(R.id.tvAvailableCount)
         tvRentedCount = findViewById(R.id.tvRentedCount)
-        etSearch = findViewById(R.id.etSearch)
     }
 
     private fun loadData() {
-        val totalUsers = dbHelper.getAllUsers().size
-        val totalApartments = dbHelper.getAllApartments().size
-        val availableCount = dbHelper.getAvailableApartmentsCount()
-        val rentedCount = dbHelper.getOccupiedApartmentsCount()
+        try {
+            val totalUsers = dbHelper.getAllUsers().size
+            val totalApartments = dbHelper.getAllApartments().size
+            val availableCount = dbHelper.getAvailableApartmentsCount()
+            val rentedCount = dbHelper.getOccupiedApartmentsCount()
 
-        tvTotalUsers.text = totalUsers.toString()
-        tvTotalApartments.text = totalApartments.toString()
-        tvAvailableCount.text = availableCount.toString()
-        tvRentedCount.text = rentedCount.toString()
-    }
-
-    private fun setupSearch() {
-        etSearch.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable?) {
-                if (!s.isNullOrEmpty()) {
-                    val intent = Intent(this@AdminDashboardActivity, ManageApartmentsActivity::class.java)
-                    intent.putExtra("search_query", s.toString())
-                    startActivity(intent)
-                    etSearch.text.clear()
-                }
-            }
-        })
+            tvTotalUsers.text = totalUsers.toString()
+            tvTotalApartments.text = totalApartments.toString()
+            tvAvailableCount.text = availableCount.toString()
+            tvRentedCount.text = rentedCount.toString()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(this, "Lỗi tải dữ liệu: ${e.message}", Toast.LENGTH_LONG).show()
+        }
     }
 
     private fun setupClickListeners() {

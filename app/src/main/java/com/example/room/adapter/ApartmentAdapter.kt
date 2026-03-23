@@ -46,7 +46,7 @@ class ApartmentAdapter(
         holder.tvAddress.text = apartment.address
         holder.tvArea.text = "Diện tích: ${apartment.area} m²"
 
-        // Set status
+        // Status
         holder.tvStatus.text = apartment.status
         if (apartment.status == "Còn trống") {
             holder.tvStatus.setBackgroundResource(R.drawable.bg_status_available)
@@ -54,12 +54,20 @@ class ApartmentAdapter(
             holder.tvStatus.setBackgroundResource(R.drawable.bg_status_rented)
         }
 
-        // Load image
+        // Load image - XỬ LÝ AN TOÀN
+        holder.imgApartment.setImageResource(android.R.drawable.ic_dialog_map)
+
         if (apartment.imagePath.isNotEmpty()) {
-            val imgFile = File(apartment.imagePath)
-            if (imgFile.exists()) {
-                val bitmap = BitmapFactory.decodeFile(imgFile.absolutePath)
-                holder.imgApartment.setImageBitmap(bitmap)
+            try {
+                val imgFile = File(apartment.imagePath)
+                if (imgFile.exists()) {
+                    val bitmap = BitmapFactory.decodeFile(imgFile.absolutePath)
+                    if (bitmap != null) {
+                        holder.imgApartment.setImageBitmap(bitmap)
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
 
