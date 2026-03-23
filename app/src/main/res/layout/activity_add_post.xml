@@ -6,7 +6,6 @@
     android:background="@color/bg_main"
     android:orientation="vertical">
 
-    <!-- Header / Toolbar -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -44,7 +43,6 @@
             android:orientation="vertical"
             android:padding="20dp">
 
-            <!-- Khu vực tải ảnh lên -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -79,7 +77,6 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- Input Tiêu đề -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -87,6 +84,7 @@
                 android:textColor="@color/text_primary"
                 android:textStyle="bold" />
             <EditText
+                android:id="@+id/edtAddPostTitle"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginTop="8dp"
@@ -99,7 +97,6 @@
                 android:paddingStart="12dp"
                 android:paddingEnd="12dp" />
 
-            <!-- Input Giá thuê -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -107,6 +104,7 @@
                 android:textColor="@color/text_primary"
                 android:textStyle="bold" />
             <EditText
+                android:id="@+id/edtAddPostPrice"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginTop="8dp"
@@ -120,7 +118,6 @@
                 android:paddingStart="12dp"
                 android:paddingEnd="12dp" />
 
-            <!-- Input Địa chỉ -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -128,6 +125,7 @@
                 android:textColor="@color/text_primary"
                 android:textStyle="bold" />
             <EditText
+                android:id="@+id/edtAddPostAddress"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginTop="8dp"
@@ -140,7 +138,6 @@
                 android:paddingStart="12dp"
                 android:paddingEnd="12dp" />
 
-            <!-- Nút Đăng Tin -->
             <Button
                 android:id="@+id/btnSubmitPost"
                 android:layout_width="match_parent"

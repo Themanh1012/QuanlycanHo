@@ -38,6 +38,12 @@
     <string name="add_apt_toast_success">Thêm căn hộ thành công!</string>
     <string name="add_apt_toast_fail">Thêm thất bại, thử lại sau!</string>
 
-    <string name="admin_btn_add_apt">+ THÊM CĂN HỘ MỚI</string>
+    <string name="admin_btn_add_apt">THÊM CĂN HỘ MỚI</string>
+
+
+
+    <string name="edit_user">Sửa</string>
+    <string name="delete_user">Xóa</string>
+
 
 </resources>
