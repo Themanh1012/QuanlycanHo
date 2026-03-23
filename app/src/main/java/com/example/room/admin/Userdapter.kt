@@ -1,4 +1,4 @@
-package com.example.room.admin
+package com.example.quanlycanho.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,48 +6,48 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.room.R
-import com.example.room.model.User
+import com.example.quanlycanho.R
+import com.example.quanlycanho.model.usser
 
 class UserAdapter(
-    private var userList: ArrayList<User>,
-    private val onEditClick: (User) -> Unit,
-    private val onDeleteClick: (User) -> Unit
+    private var userList: List<User>,
+    private val onDeleteClick: (User) -> Unit,
+    private val onItemClick: (User) -> Unit
 ) : RecyclerView.Adapter<UserAdapter.UserViewHolder>() {
 
     class UserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val tvUserInitial: TextView = itemView.findViewById(R.id.tvUserInitial)
-        val tvUserFullName: TextView = itemView.findViewById(R.id.tvUserFullName)
-        val tvUsername: TextView = itemView.findViewById(R.id.tvUsername)
-        val tvUserRole: TextView = itemView.findViewById(R.id.tvUserRole)
-        val btnEditUser: ImageView = itemView.findViewById(R.id.btnEditUser)
-        val btnDeleteUser: ImageView = itemView.findViewById(R.id.btnDeleteUser)
+        val ivAvatar: ImageView = itemView.findViewById(R.id.ivAvatar)
+        val tvName: TextView = itemView.findViewById(R.id.tvName)
+        val tvEmail: TextView = itemView.findViewById(R.id.tvEmail)
+        val tvRole: TextView = itemView.findViewById(R.id.tvRole)
+        val ivDelete: ImageView = itemView.findViewById(R.id.ivDelete)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_user, parent, false)
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_user, parent, false)
         return UserViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
         val user = userList[position]
-        holder.tvUserInitial.text = user.fullName.take(1).uppercase()
-        holder.tvUserFullName.text = user.fullName
-        holder.tvUsername.text = "@${user.username}"
-        if (user.role == 1) {
-            holder.tvUserRole.text = "Admin"
-            holder.tvUserRole.setTextColor(holder.itemView.context.getColor(R.color.colorPrimary))
-        } else {
-            holder.tvUserRole.text = "Khách hàng"
-            holder.tvUserRole.setTextColor(holder.itemView.context.getColor(R.color.colorAccent))
-        }
-        holder.btnEditUser.setOnClickListener { onEditClick(user) }
-        holder.btnDeleteUser.setOnClickListener { onDeleteClick(user) }
+
+        holder.tvName.text = user.name
+        holder.tvEmail.text = user.email
+
+        holder.tvRole.text = if (user.role == "admin") "Admin" else "User"
+        holder.tvRole.setBackgroundResource(
+            if (user.role == "admin") R.drawable.bg_role_badge_admin
+            else R.drawable.bg_role_badge_user
+        )
+
+        holder.ivDelete.setOnClickListener { onDeleteClick(user) }
+        holder.itemView.setOnClickListener { onItemClick(user) }
     }
 
     override fun getItemCount(): Int = userList.size
 
-    fun updateList(newList: ArrayList<User>) {
+    fun updateList(newList: List<User>) {
         userList = newList
         notifyDataSetChanged()
     }
