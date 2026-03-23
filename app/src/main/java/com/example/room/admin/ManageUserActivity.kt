@@ -7,7 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.example.room.LoginActivity
+import com.example.room.auth.LoginActivity
 import com.example.room.R
 import com.example.room.AddPostActivity // Đổi sang AddPostActivity theo file của team bạn
 
