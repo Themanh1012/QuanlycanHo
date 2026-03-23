@@ -28,7 +28,9 @@ class ManageApartmentsActivity : AppCompatActivity() {
     private lateinit var dbHelper: DatabaseHelper
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: ApartmentAdapter
-    private lateinit var etSearch: EditText
+    private lateinit var edtSearch: EditText
+    private lateinit var layoutEmpty: LinearLayout
+    private lateinit var tvApartmentCount: TextView
 
     private var apartmentList: ArrayList<Apartment> = ArrayList()
     private var filteredList: ArrayList<Apartment> = ArrayList()
@@ -44,6 +46,13 @@ class ManageApartmentsActivity : AppCompatActivity() {
         setupSearch()
         setupClickListeners()
         loadData()
+
+        // Handle search query from AdminDashboardActivity
+        val searchQuery = intent.getStringExtra("search_query")
+        if (!searchQuery.isNullOrEmpty()) {
+            edtSearch.setText(searchQuery)
+            filterApartments(searchQuery)
+        }
     }
 
     override fun onResume() {
@@ -52,8 +61,10 @@ class ManageApartmentsActivity : AppCompatActivity() {
     }
 
     private fun initViews() {
-        recyclerView = findViewById(R.id.recyclerView)  // SỬA: recyclerView thay vì recyclerViewApartments
-        etSearch = findViewById(R.id.etSearch)          // SỬA: etSearch thay vì edtSearch
+        recyclerView = findViewById(R.id.recyclerViewApartments)
+        edtSearch = findViewById(R.id.edtSearch)
+        layoutEmpty = findViewById(R.id.layoutEmpty)
+        tvApartmentCount = findViewById(R.id.tvApartmentCount)
     }
 
     private fun setupRecyclerView() {
@@ -68,7 +79,7 @@ class ManageApartmentsActivity : AppCompatActivity() {
     }
 
     private fun setupSearch() {
-        etSearch.addTextChangedListener(object : TextWatcher {
+        edtSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 filterApartments(s.toString())
@@ -78,8 +89,7 @@ class ManageApartmentsActivity : AppCompatActivity() {
     }
 
     private fun setupClickListeners() {
-        // SỬA: ivBack thay vì btnBack
-        findViewById<ImageView>(R.id.ivBack).setOnClickListener {
+        findViewById<ImageView>(R.id.btnBack).setOnClickListener {
             finish()
         }
 
@@ -95,6 +105,16 @@ class ManageApartmentsActivity : AppCompatActivity() {
         filteredList.clear()
         filteredList.addAll(apartmentList)
         adapter.notifyDataSetChanged()
+
+        tvApartmentCount.text = apartmentList.size.toString()
+
+        if (filteredList.isEmpty()) {
+            layoutEmpty.visibility = View.VISIBLE
+            recyclerView.visibility = View.GONE
+        } else {
+            layoutEmpty.visibility = View.GONE
+            recyclerView.visibility = View.VISIBLE
+        }
     }
 
     private fun filterApartments(query: String) {
@@ -111,6 +131,14 @@ class ManageApartmentsActivity : AppCompatActivity() {
             }
         }
         adapter.notifyDataSetChanged()
+
+        if (filteredList.isEmpty()) {
+            layoutEmpty.visibility = View.VISIBLE
+            recyclerView.visibility = View.GONE
+        } else {
+            layoutEmpty.visibility = View.GONE
+            recyclerView.visibility = View.VISIBLE
+        }
     }
 
     private fun openEditActivity(apartment: Apartment) {

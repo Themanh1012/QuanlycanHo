@@ -7,8 +7,6 @@ import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
-import android.provider.MediaStore
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -35,7 +33,6 @@ class AddEditApartmentActivity : AppCompatActivity() {
     private var isEditMode = false
     private var selectedImagePath: String = ""
 
-    // Views
     private lateinit var tvTitle: TextView
     private lateinit var edtTitle: EditText
     private lateinit var edtPrice: EditText
@@ -59,7 +56,6 @@ class AddEditApartmentActivity : AppCompatActivity() {
         setContentView(R.layout.activity_add_edit_apartment)
 
         dbHelper = DatabaseHelper(this)
-
         initViews()
         checkMode()
         setupClickListeners()
@@ -91,7 +87,6 @@ class AddEditApartmentActivity : AppCompatActivity() {
         } else {
             tvTitle.text = "Thêm căn hộ mới"
             btnDelete.visibility = View.GONE
-            // RESET selectedImagePath khi thêm mới
             selectedImagePath = ""
         }
     }
@@ -126,35 +121,19 @@ class AddEditApartmentActivity : AppCompatActivity() {
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            Toast.makeText(this, "Không thể tải ảnh", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun setupClickListeners() {
-        findViewById<ImageView>(R.id.btnBack).setOnClickListener {
-            finish()
-        }
-
-        btnSave.setOnClickListener {
-            saveApartment()
-        }
-
-        cardImageUpload.setOnClickListener {
-            checkPermissionAndOpenPicker()
-        }
-
-        btnChangeImage.setOnClickListener {
-            checkPermissionAndOpenPicker()
-        }
-
-        btnDelete.setOnClickListener {
-            showDeleteDialog()
-        }
+        findViewById<ImageView>(R.id.btnBack).setOnClickListener { finish() }
+        btnSave.setOnClickListener { saveApartment() }
+        cardImageUpload.setOnClickListener { checkPermissionAndOpenPicker() }
+        btnChangeImage.setOnClickListener { checkPermissionAndOpenPicker() }
+        btnDelete.setOnClickListener { showDeleteDialog() }
     }
 
     private fun checkPermissionAndOpenPicker() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            // Android 13+
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES)
                 != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(
@@ -166,7 +145,6 @@ class AddEditApartmentActivity : AppCompatActivity() {
                 openImagePicker()
             }
         } else {
-            // Android 12 and below
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(
@@ -190,7 +168,7 @@ class AddEditApartmentActivity : AppCompatActivity() {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 openImagePicker()
             } else {
-                Toast.makeText(this, "Cần cấp quyền truy cập ảnh!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Cần cấp quyền truy cập ảnh!", Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -209,19 +187,16 @@ class AddEditApartmentActivity : AppCompatActivity() {
                 try {
                     val inputStream: InputStream? = contentResolver.openInputStream(it)
                     inputStream?.let { stream ->
-                        // Tạo file mới với tên unique
-                        val fileName = "apartment_${System.currentTimeMillis()}.jpg"
-                        val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-
-                        // Tạo thư mục nếu chưa có
-                        if (!storageDir!!.exists()) {
-                            storageDir.mkdirs()
+                        // LƯU VÀO INTERNAL STORAGE - Đảm bảo ảnh không bị mất
+                        val imageDir = File(filesDir, "apartment_images")
+                        if (!imageDir.exists()) {
+                            imageDir.mkdirs()
                         }
 
-                        val file = File(storageDir, fileName)
-                        val outputStream = FileOutputStream(file)
+                        val fileName = "img_${System.currentTimeMillis()}.jpg"
+                        val imageFile = File(imageDir, fileName)
+                        val outputStream = FileOutputStream(imageFile)
 
-                        // Copy dữ liệu
                         val buffer = ByteArray(1024)
                         var length: Int
                         while (stream.read(buffer).also { len -> length = len } > 0) {
@@ -232,20 +207,21 @@ class AddEditApartmentActivity : AppCompatActivity() {
                         outputStream.flush()
                         outputStream.close()
 
-                        selectedImagePath = file.absolutePath
+                        selectedImagePath = imageFile.absolutePath
 
                         // Hiển thị ảnh
                         val bitmap = BitmapFactory.decodeFile(selectedImagePath)
-                        imgApartment.setImageBitmap(bitmap)
-                        imgApartment.visibility = View.VISIBLE
-                        layoutPlaceholder.visibility = View.GONE
-                        btnChangeImage.visibility = View.VISIBLE
-
-                        Toast.makeText(this, "Đã chọn ảnh", Toast.LENGTH_SHORT).show()
+                        if (bitmap != null) {
+                            imgApartment.setImageBitmap(bitmap)
+                            imgApartment.visibility = View.VISIBLE
+                            layoutPlaceholder.visibility = View.GONE
+                            btnChangeImage.visibility = View.VISIBLE
+                            Toast.makeText(this, "Đã chọn ảnh", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
-                    Toast.makeText(this, "Lỗi khi lưu ảnh: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Lỗi: ${e.message}", Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -274,7 +250,6 @@ class AddEditApartmentActivity : AppCompatActivity() {
         val price = priceStr.toDoubleOrNull() ?: 0.0
         val area = areaStr.toDoubleOrNull() ?: 0.0
 
-        // THÊM status
         val apartment = Apartment(
             id = apartmentId,
             title = title,
@@ -294,14 +269,10 @@ class AddEditApartmentActivity : AppCompatActivity() {
         }
 
         if (result > 0) {
-            Toast.makeText(
-                this,
-                if (isEditMode) "Cập nhật thành công!" else "Thêm căn hộ thành công!",
-                Toast.LENGTH_SHORT
-            ).show()
+            Toast.makeText(this, if (isEditMode) "Cập nhật thành công!" else "Thêm thành công!", Toast.LENGTH_SHORT).show()
             finish()
         } else {
-            Toast.makeText(this, "Thất bại, vui lòng thử lại!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Thất bại!", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -312,10 +283,8 @@ class AddEditApartmentActivity : AppCompatActivity() {
             .setPositiveButton("Xóa") { dialog, _ ->
                 val result = dbHelper.deleteApartment(apartmentId)
                 if (result > 0) {
-                    Toast.makeText(this, "Đã xóa căn hộ!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Đã xóa!", Toast.LENGTH_SHORT).show()
                     finish()
-                } else {
-                    Toast.makeText(this, "Xóa thất bại!", Toast.LENGTH_SHORT).show()
                 }
                 dialog.dismiss()
             }

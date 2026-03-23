@@ -17,7 +17,6 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "QuanLyCanHo.
             )
         """.trimIndent())
 
-        // THÊM CỘT status
         db.execSQL("""
             CREATE TABLE apartments (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -31,9 +30,14 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "QuanLyCanHo.
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        db.execSQL("DROP TABLE IF EXISTS users")
-        db.execSQL("DROP TABLE IF EXISTS apartments")
-        onCreate(db)
+        // Upgrade an toàn - thêm cột status nếu chưa có
+        if (oldVersion < 3) {
+            try {
+                db.execSQL("ALTER TABLE apartments ADD COLUMN status TEXT DEFAULT 'Còn trống'")
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
     // =============== USERS ===============
@@ -116,7 +120,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "QuanLyCanHo.
         put("description", apartment.description)
         put("area", apartment.area)
         put("imagePath", apartment.imagePath)
-        put("status", apartment.status)  // THÊM DÒNG NÀY
+        put("status", apartment.status)
         put("id_user", apartment.id_user)
     })
 
@@ -131,8 +135,8 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "QuanLyCanHo.
                     it.getString(4) ?: "",
                     it.getDouble(5),
                     it.getString(6) ?: "",
-                    it.getString(7) ?: "Còn trống",  // THÊM status
-                    it.getInt(8)
+                    it.getString(7) ?: "Còn trống",
+                    if (it.columnCount > 8) it.getInt(8) else 0
                 ))
             } while (it.moveToNext())
         }
@@ -149,8 +153,8 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "QuanLyCanHo.
             it.getString(4) ?: "",
             it.getDouble(5),
             it.getString(6) ?: "",
-            it.getString(7) ?: "Còn trống",  // THÊM status
-            it.getInt(8)
+            it.getString(7) ?: "Còn trống",
+            if (it.columnCount > 8) it.getInt(8) else 0
         )
         else null
     }
@@ -162,7 +166,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "QuanLyCanHo.
         put("description", apartment.description)
         put("area", apartment.area)
         put("imagePath", apartment.imagePath)
-        put("status", apartment.status)  // THÊM DÒNG NÀY
+        put("status", apartment.status)
         put("id_user", apartment.id_user)
     }, "id=?", arrayOf(apartment.id.toString()))
 
@@ -172,7 +176,6 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "QuanLyCanHo.
         if (it.moveToFirst()) it.getInt(0) else 0
     }
 
-    // SỬA: Đếm theo status thay vì id_user
     fun getOccupiedApartmentsCount(): Int = readableDatabase.rawQuery(
         "SELECT COUNT(*) FROM apartments WHERE status = 'Đã thuê'", null
     ).use { if (it.moveToFirst()) it.getInt(0) else 0 }
@@ -190,7 +193,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "QuanLyCanHo.
                 add(Apartment(
                     it.getInt(0), it.getString(1), it.getDouble(2), it.getString(3),
                     it.getString(4) ?: "", it.getDouble(5), it.getString(6) ?: "",
-                    it.getString(7) ?: "Còn trống", it.getInt(8)
+                    it.getString(7) ?: "Còn trống", if (it.columnCount > 8) it.getInt(8) else 0
                 ))
             } while (it.moveToNext())
         }
@@ -205,7 +208,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "QuanLyCanHo.
                 add(Apartment(
                     it.getInt(0), it.getString(1), it.getDouble(2), it.getString(3),
                     it.getString(4) ?: "", it.getDouble(5), it.getString(6) ?: "",
-                    it.getString(7) ?: "Còn trống", it.getInt(8)
+                    it.getString(7) ?: "Còn trống", if (it.columnCount > 8) it.getInt(8) else 0
                 ))
             } while (it.moveToNext())
         }
@@ -220,7 +223,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "QuanLyCanHo.
                 add(Apartment(
                     it.getInt(0), it.getString(1), it.getDouble(2), it.getString(3),
                     it.getString(4) ?: "", it.getDouble(5), it.getString(6) ?: "",
-                    it.getString(7) ?: "Còn trống", it.getInt(8)
+                    it.getString(7) ?: "Còn trống", if (it.columnCount > 8) it.getInt(8) else 0
                 ))
             } while (it.moveToNext())
         }
