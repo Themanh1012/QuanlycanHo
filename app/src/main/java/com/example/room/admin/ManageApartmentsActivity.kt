@@ -5,11 +5,10 @@ import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -25,79 +24,75 @@ import java.text.DecimalFormat
 
 class ManageApartmentsActivity : AppCompatActivity() {
 
+    private val TAG = "ManageApartments"
     private lateinit var dbHelper: DatabaseHelper
-    private lateinit var recyclerView: RecyclerView
+    private lateinit var rvApartments: RecyclerView
+    private lateinit var etSearchApartment: EditText
+    private lateinit var fabAddApartment: FloatingActionButton
+    private lateinit var ivBack: ImageView
     private lateinit var adapter: ApartmentAdapter
-    private lateinit var edtSearch: EditText
-    private lateinit var layoutEmpty: LinearLayout
-    private lateinit var tvApartmentCount: TextView
 
     private var apartmentList: ArrayList<Apartment> = ArrayList()
     private var filteredList: ArrayList<Apartment> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_manage_apartments)
 
-        dbHelper = DatabaseHelper(this)
+        try {
+            setContentView(R.layout.activity_manage_apartments)
 
-        initViews()
-        setupRecyclerView()
-        setupSearch()
-        setupClickListeners()
-        loadData()
+            dbHelper = DatabaseHelper(this)
 
-        // Handle search query from AdminDashboardActivity
-        val searchQuery = intent.getStringExtra("search_query")
-        if (!searchQuery.isNullOrEmpty()) {
-            edtSearch.setText(searchQuery)
-            filterApartments(searchQuery)
+            // Init views - phải đúng với ID trong layout
+            rvApartments = findViewById(R.id.rvApartments)
+            etSearchApartment = findViewById(R.id.etSearchApartment)
+            fabAddApartment = findViewById(R.id.fabAddApartment)
+            ivBack = findViewById(R.id.ivBack)
+
+            // Click listeners
+            ivBack.setOnClickListener { finish() }
+
+            fabAddApartment.setOnClickListener {
+                val intent = Intent(this, AddEditApartmentActivity::class.java)
+                intent.putExtra("mode", "add")
+                startActivity(intent)
+            }
+
+            setupRecyclerView()
+            setupSearch()
+            loadData()
+
+        } catch (e: Exception) {
+            Log.e(TAG, "onCreate error", e)
+            Toast.makeText(this, "Lỗi: ${e.message}", Toast.LENGTH_SHORT).show()
+            finish()
         }
     }
 
     override fun onResume() {
         super.onResume()
-        loadData()
-    }
-
-    private fun initViews() {
-        recyclerView = findViewById(R.id.recyclerViewApartments)
-        edtSearch = findViewById(R.id.edtSearch)
-        layoutEmpty = findViewById(R.id.layoutEmpty)
-        tvApartmentCount = findViewById(R.id.tvApartmentCount)
+        try {
+            loadData()
+        } catch (e: Exception) {
+            Log.e(TAG, "onResume error", e)
+        }
     }
 
     private fun setupRecyclerView() {
         adapter = ApartmentAdapter(
-            filteredList,
-            onEditClick = { apartment -> openEditActivity(apartment) },
-            onDeleteClick = { apartment -> showDeleteDialog(apartment) },
-            onDetailClick = { apartment -> showDetailDialog(apartment) }
+            apartments = filteredList,
+            onItemClick = { apartment -> showDetailDialog(apartment) },
+            onEditClick = { apartment ->
+                val intent = Intent(this, AddEditApartmentActivity::class.java)
+                intent.putExtra("mode", "edit")
+                intent.putExtra("apartment_id", apartment.id)
+                startActivity(intent)
+            },
+            onDeleteClick = { apartment -> showDeleteDialog(apartment) }
         )
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = adapter
-    }
 
-    private fun setupSearch() {
-        edtSearch.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                filterApartments(s.toString())
-            }
-            override fun afterTextChanged(s: Editable?) {}
-        })
-    }
-
-    private fun setupClickListeners() {
-        findViewById<ImageView>(R.id.btnBack).setOnClickListener {
-            finish()
-        }
-
-        findViewById<FloatingActionButton>(R.id.fabAdd).setOnClickListener {
-            val intent = Intent(this, AddEditApartmentActivity::class.java)
-            intent.putExtra("mode", "add")
-            startActivity(intent)
-        }
+        rvApartments.layoutManager = LinearLayoutManager(this)
+        rvApartments.adapter = adapter
     }
 
     private fun loadData() {
@@ -105,16 +100,16 @@ class ManageApartmentsActivity : AppCompatActivity() {
         filteredList.clear()
         filteredList.addAll(apartmentList)
         adapter.notifyDataSetChanged()
+    }
 
-        tvApartmentCount.text = apartmentList.size.toString()
-
-        if (filteredList.isEmpty()) {
-            layoutEmpty.visibility = View.VISIBLE
-            recyclerView.visibility = View.GONE
-        } else {
-            layoutEmpty.visibility = View.GONE
-            recyclerView.visibility = View.VISIBLE
-        }
+    private fun setupSearch() {
+        etSearchApartment.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                filterApartments(s.toString())
+            }
+        })
     }
 
     private fun filterApartments(query: String) {
@@ -122,44 +117,24 @@ class ManageApartmentsActivity : AppCompatActivity() {
         if (query.isEmpty()) {
             filteredList.addAll(apartmentList)
         } else {
-            val searchQuery = query.lowercase().trim()
             for (apartment in apartmentList) {
-                if (apartment.title.lowercase().contains(searchQuery) ||
-                    apartment.address.lowercase().contains(searchQuery)) {
+                if (apartment.title.lowercase().contains(query.lowercase()) ||
+                    apartment.address.lowercase().contains(query.lowercase())) {
                     filteredList.add(apartment)
                 }
             }
         }
         adapter.notifyDataSetChanged()
-
-        if (filteredList.isEmpty()) {
-            layoutEmpty.visibility = View.VISIBLE
-            recyclerView.visibility = View.GONE
-        } else {
-            layoutEmpty.visibility = View.GONE
-            recyclerView.visibility = View.VISIBLE
-        }
-    }
-
-    private fun openEditActivity(apartment: Apartment) {
-        val intent = Intent(this, AddEditApartmentActivity::class.java)
-        intent.putExtra("mode", "edit")
-        intent.putExtra("apartmentId", apartment.id)
-        startActivity(intent)
     }
 
     private fun showDeleteDialog(apartment: Apartment) {
         AlertDialog.Builder(this)
-            .setTitle("Xác nhận xóa")
-            .setMessage("Bạn có chắc muốn xóa căn hộ \"${apartment.title}\"?")
+            .setTitle("Xóa căn hộ")
+            .setMessage("Bạn có chắc muốn xóa \"${apartment.title}\"?")
             .setPositiveButton("Xóa") { dialog, _ ->
-                val result = dbHelper.deleteApartment(apartment.id)
-                if (result > 0) {
-                    Toast.makeText(this, "Đã xóa căn hộ!", Toast.LENGTH_SHORT).show()
-                    loadData()
-                } else {
-                    Toast.makeText(this, "Xóa thất bại!", Toast.LENGTH_SHORT).show()
-                }
+                dbHelper.deleteApartment(apartment.id)
+                loadData()
+                Toast.makeText(this, "Đã xóa thành công!", Toast.LENGTH_SHORT).show()
                 dialog.dismiss()
             }
             .setNegativeButton("Hủy", null)
@@ -187,10 +162,16 @@ class ManageApartmentsActivity : AppCompatActivity() {
         tvDescription.text = if (apartment.description.isNotEmpty()) apartment.description else "Không có mô tả"
 
         if (apartment.imagePath.isNotEmpty()) {
-            val imgFile = File(apartment.imagePath)
-            if (imgFile.exists()) {
-                val bitmap = BitmapFactory.decodeFile(imgFile.absolutePath)
-                imgApartment.setImageBitmap(bitmap)
+            try {
+                val imgFile = File(apartment.imagePath)
+                if (imgFile.exists()) {
+                    val bitmap = BitmapFactory.decodeFile(imgFile.absolutePath)
+                    if (bitmap != null) {
+                        imgApartment.setImageBitmap(bitmap)
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Load image error", e)
             }
         }
 
