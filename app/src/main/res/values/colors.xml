@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Màu chủ đạo (Xanh dương) -->
+
     <color name="colorPrimary">#2563EB</color>
     <color name="colorAccent">#10B981</color>
 
-    <!-- Bảng màu Sáng -->
+
     <color name="bg_main">#F3F4F6</color>
     <color name="bg_card">#FFFFFF</color>
 
@@ -19,4 +19,27 @@
     <color name="bg_search_bar">#FFFFFF</color>
     <color name="icon_circle_color">#2563EB</color>
     <color name="text_blue">#2563EB</color>
+
+
+    <color name="dark_bg_main">#1A1A2E</color>
+    <color name="dark_bg_card">#16213E</color>
+    <color name="dark_bg_header">#0F3460</color>
+
+
+    <color name="dark_colorPrimary">#2563EB</color>
+    <color name="dark_colorAccent">#E94560</color>
+    <color name="dark_colorSuccess">#10B981</color>
+    <color name="dark_colorWarning">#F59E0B</color>
+    <color name="dark_colorError">#EF4444</color>
+
+
+    <color name="dark_text_primary">#FFFFFF</color>
+    <color name="dark_text_secondary">#9CA3AF</color>
+    <color name="dark_text_hint">#6B7280</color>
+
+
+    <color name="dark_icon_color">#9CA3AF</color>
+    <color name="dark_btn_primary">#2563EB</color>
+    <color name="dark_btn_accent">#E94560</color>
+    <color name="dark_btn_secondary">#374151</color>
 </resources>
