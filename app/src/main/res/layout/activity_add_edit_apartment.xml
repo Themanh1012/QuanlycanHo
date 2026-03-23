@@ -10,7 +10,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/dark_bg_header"
+        android:background="@color/dark_bg_card"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:padding="16dp">
@@ -58,7 +58,7 @@
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardImageUpload"
                 android:layout_width="match_parent"
-                android:layout_height="180dp"
+                android:layout_height="200dp"
                 app:cardBackgroundColor="@color/dark_bg_card"
                 app:cardCornerRadius="12dp">
 
@@ -81,8 +81,8 @@
                         android:orientation="vertical">
 
                         <ImageView
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
+                            android:layout_width="56dp"
+                            android:layout_height="56dp"
                             android:src="@android:drawable/ic_menu_gallery"
                             android:tint="@color/dark_text_secondary" />
 
@@ -90,8 +90,17 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:text="Nhấn để thêm ảnh"
-                            android:textColor="@color/dark_text_secondary" />
+                            android:text="Nhấn để chọn ảnh"
+                            android:textColor="@color/dark_text_secondary"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="Gallery / Camera / Ảnh mẫu"
+                            android:textColor="@color/dark_text_hint"
+                            android:textSize="12sp" />
                     </LinearLayout>
                 </FrameLayout>
             </androidx.cardview.widget.CardView>
@@ -102,76 +111,118 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="8dp"
+                android:padding="8dp"
                 android:text="Đổi ảnh"
                 android:textColor="@color/dark_colorPrimary"
+                android:textSize="14sp"
                 android:visibility="gone" />
 
             <!-- Title -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Tiêu đề *"
+                android:textColor="@color/dark_text_secondary"
+                android:textSize="14sp" />
+
             <EditText
                 android:id="@+id/edtTitle"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="4dp"
                 android:background="@color/dark_bg_card"
-                android:hint="Tiêu đề"
+                android:hint="Nhập tiêu đề căn hộ"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 android:textColor="@color/dark_text_primary"
-                android:textColorHint="@color/dark_text_secondary" />
+                android:textColorHint="@color/dark_text_hint" />
 
             <!-- Price -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Giá thuê (VND) *"
+                android:textColor="@color/dark_text_secondary"
+                android:textSize="14sp" />
+
             <EditText
                 android:id="@+id/edtPrice"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="4dp"
                 android:background="@color/dark_bg_card"
-                android:hint="Giá thuê (VND)"
+                android:hint="Nhập giá thuê"
                 android:inputType="number"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 android:textColor="@color/dark_text_primary"
-                android:textColorHint="@color/dark_text_secondary" />
+                android:textColorHint="@color/dark_text_hint" />
 
             <!-- Address -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Địa chỉ *"
+                android:textColor="@color/dark_text_secondary"
+                android:textSize="14sp" />
+
             <EditText
                 android:id="@+id/edtAddress"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="4dp"
                 android:background="@color/dark_bg_card"
-                android:hint="Địa chỉ"
+                android:hint="Nhập địa chỉ"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 android:textColor="@color/dark_text_primary"
-                android:textColorHint="@color/dark_text_secondary" />
+                android:textColorHint="@color/dark_text_hint" />
 
             <!-- Area -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Diện tích (m²)"
+                android:textColor="@color/dark_text_secondary"
+                android:textSize="14sp" />
+
             <EditText
                 android:id="@+id/edtArea"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="4dp"
                 android:background="@color/dark_bg_card"
-                android:hint="Diện tích (m²)"
+                android:hint="Nhập diện tích"
                 android:inputType="numberDecimal"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 android:textColor="@color/dark_text_primary"
-                android:textColorHint="@color/dark_text_secondary" />
+                android:textColorHint="@color/dark_text_hint" />
 
             <!-- Description -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Mô tả"
+                android:textColor="@color/dark_text_secondary"
+                android:textSize="14sp" />
+
             <EditText
                 android:id="@+id/edtDescription"
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="4dp"
                 android:background="@color/dark_bg_card"
                 android:gravity="top"
-                android:hint="Mô tả"
+                android:hint="Nhập mô tả căn hộ"
                 android:padding="16dp"
                 android:textColor="@color/dark_text_primary"
-                android:textColorHint="@color/dark_text_secondary" />
+                android:textColorHint="@color/dark_text_hint" />
 
             <!-- Delete Button -->
             <Button
@@ -184,6 +235,11 @@
                 android:textColor="@android:color/white"
                 android:visibility="gone"
                 app:cornerRadius="12dp" />
+
+            <!-- Spacer -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="32dp" />
 
         </LinearLayout>
     </ScrollView>
