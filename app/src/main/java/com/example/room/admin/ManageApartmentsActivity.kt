@@ -1,76 +1,73 @@
-package com.example.quanlycanho.admin
+package com.example.room.admin
 
-import android.app.AlertDialog
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
+import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.quanlycanho.R
-import com.example.quanlycanho.adapter.ApartmentAdapter
-import com.example.quanlycanho.database.DatabaseHelper
-import com.example.quanlycanho.model.Apartment
+import com.example.room.R
+import com.example.room.database.DatabaseHelper
+import com.example.room.model.Apartment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import java.io.File
+import java.text.DecimalFormat
 
 class ManageApartmentsActivity : AppCompatActivity() {
 
-    private lateinit var databaseHelper: DatabaseHelper
+    private lateinit var dbHelper: DatabaseHelper
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: ApartmentAdapter
     private lateinit var etSearch: EditText
-    private lateinit var ivBack: ImageView
-    private lateinit var fabAdd: FloatingActionButton
 
-    private var apartmentList = ArrayList<Apartment>()
+    private var apartmentList: ArrayList<Apartment> = ArrayList()
+    private var filteredList: ArrayList<Apartment> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_manage_apartments)
 
-        databaseHelper = DatabaseHelper(this)
+        dbHelper = DatabaseHelper(this)
 
         initViews()
-        loadApartments()
-        setupListeners()
+        setupRecyclerView()
+        setupSearch()
+        setupClickListeners()
+        loadData()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadData()
     }
 
     private fun initViews() {
-        recyclerView = findViewById(R.id.recyclerView)
-        etSearch = findViewById(R.id.etSearch)
-        ivBack = findViewById(R.id.ivBack)
-        fabAdd = findViewById(R.id.fabAdd)
+        recyclerView = findViewById(R.id.recyclerView)  // SỬA: recyclerView thay vì recyclerViewApartments
+        etSearch = findViewById(R.id.etSearch)          // SỬA: etSearch thay vì edtSearch
+    }
 
+    private fun setupRecyclerView() {
         adapter = ApartmentAdapter(
-            apartmentList,
-            onEditClick = { apartment -> editApartment(apartment) },
-            onDeleteClick = { apartment -> deleteApartment(apartment) },
-            onItemClick = { apartment -> viewApartmentDetails(apartment) }
+            filteredList,
+            onEditClick = { apartment -> openEditActivity(apartment) },
+            onDeleteClick = { apartment -> showDeleteDialog(apartment) },
+            onDetailClick = { apartment -> showDetailDialog(apartment) }
         )
-
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
     }
 
-    private fun loadApartments() {
-        apartmentList.clear()
-        apartmentList.addAll(databaseHelper.getAllApartments())
-        adapter.updateList(apartmentList)
-    }
-
-    private fun setupListeners() {
-        ivBack.setOnClickListener {
-            finish()
-        }
-
-        fabAdd.setOnClickListener {
-            startActivity(Intent(this, AddEditApartmentActivity::class.java))
-        }
-
+    private fun setupSearch() {
         etSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -80,55 +77,99 @@ class ManageApartmentsActivity : AppCompatActivity() {
         })
     }
 
-    private fun filterApartments(query: String) {
-        val filteredList = if (query.isEmpty()) {
-            apartmentList
-        } else {
-            ArrayList(apartmentList.filter {
-                it.name.contains(query, ignoreCase = true) ||
-                        it.address.contains(query, ignoreCase = true)
-            })
+    private fun setupClickListeners() {
+        // SỬA: ivBack thay vì btnBack
+        findViewById<ImageView>(R.id.ivBack).setOnClickListener {
+            finish()
         }
-        adapter.updateList(filteredList)
+
+        findViewById<FloatingActionButton>(R.id.fabAdd).setOnClickListener {
+            val intent = Intent(this, AddEditApartmentActivity::class.java)
+            intent.putExtra("mode", "add")
+            startActivity(intent)
+        }
     }
 
-    private fun editApartment(apartment: Apartment) {
+    private fun loadData() {
+        apartmentList = dbHelper.getAllApartments()
+        filteredList.clear()
+        filteredList.addAll(apartmentList)
+        adapter.notifyDataSetChanged()
+    }
+
+    private fun filterApartments(query: String) {
+        filteredList.clear()
+        if (query.isEmpty()) {
+            filteredList.addAll(apartmentList)
+        } else {
+            val searchQuery = query.lowercase().trim()
+            for (apartment in apartmentList) {
+                if (apartment.title.lowercase().contains(searchQuery) ||
+                    apartment.address.lowercase().contains(searchQuery)) {
+                    filteredList.add(apartment)
+                }
+            }
+        }
+        adapter.notifyDataSetChanged()
+    }
+
+    private fun openEditActivity(apartment: Apartment) {
         val intent = Intent(this, AddEditApartmentActivity::class.java)
-        intent.putExtra("APARTMENT_ID", apartment.id)
+        intent.putExtra("mode", "edit")
+        intent.putExtra("apartmentId", apartment.id)
         startActivity(intent)
     }
 
-    private fun deleteApartment(apartment: Apartment) {
+    private fun showDeleteDialog(apartment: Apartment) {
         AlertDialog.Builder(this)
-            .setTitle("Xóa căn hộ")
-            .setMessage("Bạn có chắc muốn xóa căn hộ \"${apartment.name}\"?")
-            .setPositiveButton("Xóa") { _, _ ->
-                databaseHelper.deleteApartment(apartment.id)
-                loadApartments()
-                Toast.makeText(this, "Đã xóa căn hộ", Toast.LENGTH_SHORT).show()
+            .setTitle("Xác nhận xóa")
+            .setMessage("Bạn có chắc muốn xóa căn hộ \"${apartment.title}\"?")
+            .setPositiveButton("Xóa") { dialog, _ ->
+                val result = dbHelper.deleteApartment(apartment.id)
+                if (result > 0) {
+                    Toast.makeText(this, "Đã xóa căn hộ!", Toast.LENGTH_SHORT).show()
+                    loadData()
+                } else {
+                    Toast.makeText(this, "Xóa thất bại!", Toast.LENGTH_SHORT).show()
+                }
+                dialog.dismiss()
             }
             .setNegativeButton("Hủy", null)
             .show()
     }
 
-    private fun viewApartmentDetails(apartment: Apartment) {
-        AlertDialog.Builder(this)
-            .setTitle(apartment.name)
-            .setMessage("""
-                Địa chỉ: ${apartment.address}
-                Giá: ${String.format("%,d", apartment.price)} VNĐ/tháng
-                Diện tích: ${apartment.area} m²
-                Phòng ngủ: ${apartment.bedrooms}
-                Phòng tắm: ${apartment.bathrooms}
-                Trạng thái: ${if (apartment.status == "available") "Còn trống" else "Đã thuê"}
-                Mô tả: ${apartment.description}
-            """.trimIndent())
-            .setPositiveButton("Đóng", null)
-            .show()
-    }
+    private fun showDetailDialog(apartment: Apartment) {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_apartment_detail, null)
 
-    override fun onResume() {
-        super.onResume()
-        loadApartments()
+        val imgApartment = dialogView.findViewById<ImageView>(R.id.imgApartment)
+        val tvTitle = dialogView.findViewById<TextView>(R.id.tvTitle)
+        val tvAddress = dialogView.findViewById<TextView>(R.id.tvAddress)
+        val tvPrice = dialogView.findViewById<TextView>(R.id.tvPrice)
+        val tvArea = dialogView.findViewById<TextView>(R.id.tvArea)
+        val tvStatus = dialogView.findViewById<TextView>(R.id.tvStatus)
+        val tvDescription = dialogView.findViewById<TextView>(R.id.tvDescription)
+
+        tvTitle.text = apartment.title
+        tvAddress.text = apartment.address
+
+        val formatter = DecimalFormat("#,###")
+        tvPrice.text = formatter.format(apartment.price) + " VND/tháng"
+        tvArea.text = "${apartment.area} m²"
+        tvStatus.text = apartment.status
+        tvDescription.text = if (apartment.description.isNotEmpty()) apartment.description else "Không có mô tả"
+
+        if (apartment.imagePath.isNotEmpty()) {
+            val imgFile = File(apartment.imagePath)
+            if (imgFile.exists()) {
+                val bitmap = BitmapFactory.decodeFile(imgFile.absolutePath)
+                imgApartment.setImageBitmap(bitmap)
+            }
+        }
+
+        AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setPositiveButton("Đóng", null)
+            .create()
+            .show()
     }
 }

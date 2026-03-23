@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/dark_bg_main"
     android:orientation="vertical"
-    tools:context=".admin.ManageUserActivity">
+    tools:context=".admin.ManageApartmentsActivity">
 
     <!-- Header -->
     <LinearLayout
@@ -29,14 +29,16 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="Quản lý người dùng"
+            android:text="Quản lý căn hộ"
             android:textColor="@color/dark_text_primary"
             android:textSize="20sp"
             android:textStyle="bold" />
 
-        <View
+        <ImageView
+            android:id="@+id/btnFilter"
             android:layout_width="32dp"
-            android:layout_height="32dp" />
+            android:layout_height="32dp"
+            android:src="@android:drawable/ic_menu_sort_by_size" />
     </LinearLayout>
 
     <!-- Search -->
@@ -52,7 +54,7 @@
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_weight="1"
-            android:hint="Tìm kiếm người dùng..."
+            android:hint="Tìm kiếm căn hộ..."
             android:textColorHint="@color/dark_text_secondary"
             android:textColor="@color/dark_text_primary"
             android:background="@android:color/transparent"
@@ -67,11 +69,26 @@
             android:src="@android:drawable/ic_menu_search" />
     </LinearLayout>
 
-    <!-- User List -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewUsers"
+    <!-- Apartment List -->
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabAdd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:src="@android:drawable/ic_input_add"
+            app:backgroundTint="@color/dark_colorAccent"
+            app:tint="@color/dark_text_primary" />
+    </FrameLayout>
 
 </LinearLayout>

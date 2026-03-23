@@ -1,37 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="colorPrimary">#2563EB</color>
-    <color name="colorAccent">#10B981</color>
+    <color name="colorPrimary">#3B82F6</color>
+    <color name="colorAccent">#EF4444</color>
 
 
-    <color name="bg_main">#F3F4F6</color>
-    <color name="bg_card">#FFFFFF</color>
-
-    <color name="text_primary">#111827</color>
-    <color name="text_secondary">#6B7280</color>
-
-    <color name="icon_color">#6B7280</color>
-    <color name="divider_color">#E5E7EB</color>
-    <color name="bg_icon_menu">#E0E7FF</color>
-    <color name="bg_header">#2563EB</color>
-    <color name="text_on_header">#FFFFFF</color>
-    <color name="bg_search_bar">#FFFFFF</color>
-    <color name="icon_circle_color">#2563EB</color>
-    <color name="text_blue">#2563EB</color>
+    <!-- Background - Pure Black -->
+    <color name="dark_bg_main">#121212</color>
+    <color name="dark_bg_card">#1E1E1E</color>
+    <color name="dark_bg_header">#121212</color>
 
 
-    <color name="dark_bg_main">#1A1A2E</color>
-    <color name="dark_bg_card">#16213E</color>
-    <color name="dark_bg_header">#0F3460</color>
-
-
-    <color name="dark_colorPrimary">#2563EB</color>
-    <color name="dark_colorAccent">#E94560</color>
-    <color name="dark_colorSuccess">#10B981</color>
+    <color name="dark_colorPrimary">#3B82F6</color>
+    <color name="dark_colorAccent">#EF4444</color>
+    <color name="dark_colorSuccess">#22C55E</color>
     <color name="dark_colorWarning">#F59E0B</color>
     <color name="dark_colorError">#EF4444</color>
 
+
+    <color name="dark_card_blue">#1E3A5F</color>
+    <color name="dark_card_green">#1E3D2F</color>
+    <color name="dark_card_red">#3D1E1E</color>
+    <color name="dark_card_purple">#2D1E3D</color>
 
     <color name="dark_text_primary">#FFFFFF</color>
     <color name="dark_text_secondary">#9CA3AF</color>
@@ -39,7 +29,11 @@
 
 
     <color name="dark_icon_color">#9CA3AF</color>
-    <color name="dark_btn_primary">#2563EB</color>
-    <color name="dark_btn_accent">#E94560</color>
-    <color name="dark_btn_secondary">#374151</color>
+    <color name="dark_btn_primary">#3B82F6</color>
+    <color name="dark_btn_accent">#EF4444</color>
+    <color name="dark_btn_secondary">#262626</color>
+
+
+    <color name="dark_divider">#333333</color>
+    <color name="dark_border">#333333</color>
 </resources>

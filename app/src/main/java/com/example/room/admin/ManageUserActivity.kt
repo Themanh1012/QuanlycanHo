@@ -1,6 +1,7 @@
-package com.example.quanlycanho.admin
+package com.example.room.admin
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -10,10 +11,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.quanlycanho.R
-import com.example.quanlycanho.adapter.UserAdapter
-import com.example.quanlycanho.database.DatabaseHelper
-import com.example.quanlycanho.model.User
+import com.example.room.R
+import com.example.room.adapter.UserAdapter
+import com.example.room.database.DatabaseHelper
+import com.example.room.model.User
 
 class ManageUserActivity : AppCompatActivity() {
 
@@ -27,7 +28,7 @@ class ManageUserActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_manage_users)
+        setContentView(R.layout.activity_manage_user)
 
         databaseHelper = DatabaseHelper(this)
 
@@ -37,13 +38,15 @@ class ManageUserActivity : AppCompatActivity() {
     }
 
     private fun initViews() {
-        recyclerView = findViewById(R.id.recyclerView)
+        recyclerView = findViewById(R.id.recyclerViewUsers)
         etSearch = findViewById(R.id.etSearch)
         ivBack = findViewById(R.id.ivBack)
 
         adapter = UserAdapter(
             userList,
+            onEditClick = { user -> editUser(user) },
             onDeleteClick = { user -> deleteUser(user) },
+            onChangePasswordClick = { user -> changePassword(user) },
             onItemClick = { user -> viewUserDetails(user) }
         )
 
@@ -76,17 +79,23 @@ class ManageUserActivity : AppCompatActivity() {
             userList
         } else {
             ArrayList(userList.filter {
-                it.name.contains(query, ignoreCase = true) ||
-                        it.email.contains(query, ignoreCase = true)
+                it.fullName.contains(query, ignoreCase = true) ||
+                        it.username.contains(query, ignoreCase = true)
             })
         }
         adapter.updateList(filteredList)
     }
 
+    private fun editUser(user: User) {
+        val intent = Intent(this, AddEditUserActivity::class.java)
+        intent.putExtra("USER_ID", user.id)
+        startActivity(intent)
+    }
+
     private fun deleteUser(user: User) {
         AlertDialog.Builder(this)
             .setTitle("Xóa người dùng")
-            .setMessage("Bạn có chắc muốn xóa người dùng \"${user.name}\"?")
+            .setMessage("Bạn có chắc muốn xóa người dùng \"${user.fullName}\"?")
             .setPositiveButton("Xóa") { _, _ ->
                 databaseHelper.deleteUser(user.id)
                 loadUsers()
@@ -96,13 +105,41 @@ class ManageUserActivity : AppCompatActivity() {
             .show()
     }
 
+    private fun changePassword(user: User) {
+        val intent = Intent(this, ChangePasswordActivity::class.java)
+        intent.putExtra("USER_ID", user.id)
+        startActivity(intent)
+    }
+
     private fun viewUserDetails(user: User) {
+        val roleText = when(user.role) {
+            1 -> "Quản trị viên"
+            2 -> "Khách hàng"
+            else -> "Không xác định"
+        }
+
+        val options = arrayOf("Xem chi tiết", "Chỉnh sửa", "Đổi mật khẩu", "Xóa")
+
         AlertDialog.Builder(this)
-            .setTitle(user.name)
+            .setTitle(user.fullName)
+            .setItems(options) { _, which ->
+                when (which) {
+                    0 -> showUserDetails(user, roleText)
+                    1 -> editUser(user)
+                    2 -> changePassword(user)
+                    3 -> deleteUser(user)
+                }
+            }
+            .show()
+    }
+
+    private fun showUserDetails(user: User, roleText: String) {
+        AlertDialog.Builder(this)
+            .setTitle(user.fullName)
             .setMessage("""
-                Email: ${user.email}
-                Số điện thoại: ${user.phone}
-                Vai trò: ${if (user.role == "admin") "Quản trị viên" else "Người dùng"}
+                Username: ${user.username}
+                Họ tên: ${user.fullName}
+                Vai trò: $roleText
             """.trimIndent())
             .setPositiveButton("Đóng", null)
             .show()

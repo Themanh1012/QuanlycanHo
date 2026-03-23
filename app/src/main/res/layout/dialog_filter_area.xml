@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Diện tích tối thiểu (m²)"
+        android:textColor="@color/dark_text_primary"
+        android:textSize="14sp" />
+
+    <EditText
+        android:id="@+id/etMinArea"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/dark_bg_card"
+        android:hint="VD: 20"
+        android:inputType="number"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:textColor="@color/dark_text_primary"
+        android:textColorHint="@color/dark_text_secondary" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Diện tích tối đa (m²)"
+        android:textColor="@color/dark_text_primary"
+        android:textSize="14sp" />
+
+    <EditText
+        android:id="@+id/etMaxArea"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/dark_bg_card"
+        android:hint="VD: 100"
+        android:inputType="number"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:textColor="@color/dark_text_primary"
+        android:textColorHint="@color/dark_text_secondary" />
+
+</LinearLayout>
