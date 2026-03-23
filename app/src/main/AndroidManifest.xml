@@ -12,10 +12,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Room">
         <activity
-            android:name=".RegisterActivity"
+            android:name=".auth.RegisterActivity"
             android:exported="false" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".auth.LoginActivity"
             android:exported="false" />
         <activity
             android:name=".admin.ManageUserActivity"
@@ -33,14 +33,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ApartmentDetailActivity"
+            android:name=".listing.ApartmentDetailActivity"
             android:exported="false" />
-        <activity android:name=".AddPostActivity" android:exported="false" />
-        <activity android:name=".EditProfileActivity" android:exported="false" />
-        <activity android:name=".MotelListActivity" android:exported="false" />
-        <activity android:name=".HistoryActivity" android:exported="false" />
-        <activity android:name=".SettingsActivity" android:exported="false" />
-        <activity android:name=".ApartmentListActivity" android:exported="false" />
+        <activity android:name=".listing.AddPostActivity" android:exported="false" />
+        <activity android:name=".user.EditProfileActivity" android:exported="false" />
+        <activity android:name=".listing.MotelListActivity" android:exported="false" />
+        <activity android:name=".user.HistoryActivity" android:exported="false" />
+        <activity android:name=".user.SettingsActivity" android:exported="false" />
+        <activity android:name=".listing.ApartmentListActivity" android:exported="false" />
     </application>
 
 </manifest>

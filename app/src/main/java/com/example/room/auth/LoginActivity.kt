@@ -1,18 +1,18 @@
-package com.example.room
+package com.example.room.auth
 
-import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import android.content.Intent
+import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
+import com.example.room.MainActivity
+import com.example.room.R
+import com.example.room.auth.RegisterActivity
 import com.example.room.admin.ManageUserActivity
 import com.example.room.database.DatabaseHelper
-
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var dbHelper: DatabaseHelper
@@ -53,12 +53,12 @@ class LoginActivity : AppCompatActivity() {
                     startActivity(intent)
                     finish()
                 }else{
-                    Toast.makeText(this, "Sai tài khoản hoặc mật khẩu",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Sai tài khoản hoặc mật khẩu", Toast.LENGTH_SHORT).show()
                 }
             }
         }
         tvGoToRegister.setOnClickListener {
-            val intent = Intent(this, RegisterActivity:: class.java)
+            val intent = Intent(this, RegisterActivity::class.java)
             startActivity(intent)
         }
 
