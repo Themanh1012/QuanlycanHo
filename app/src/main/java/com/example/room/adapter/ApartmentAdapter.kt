@@ -54,19 +54,27 @@ class ApartmentAdapter(
                 holder.tvStatus?.setBackgroundResource(R.drawable.bg_status_rented)
             }
 
-            holder.imgApartment?.setImageResource(android.R.drawable.ic_dialog_map)
-
-            if (apartment.imagePath.isNotEmpty()) {
-                try {
-                    val imgFile = File(apartment.imagePath)
-                    if (imgFile.exists()) {
-                        val bitmap = BitmapFactory.decodeFile(imgFile.absolutePath)
-                        if (bitmap != null) {
-                            holder.imgApartment?.setImageBitmap(bitmap)
+            // Hiển thị ảnh
+            if (holder.imgApartment != null) {
+                if (apartment.imagePath.isNotEmpty()) {
+                    try {
+                        val imgFile = File(apartment.imagePath)
+                        if (imgFile.exists()) {
+                            val bitmap = BitmapFactory.decodeFile(imgFile.absolutePath)
+                            if (bitmap != null) {
+                                holder.imgApartment.setImageBitmap(bitmap)
+                            } else {
+                                holder.imgApartment.setImageResource(R.drawable.canho01)
+                            }
+                        } else {
+                            holder.imgApartment.setImageResource(R.drawable.canho01)
                         }
+                    } catch (e: Exception) {
+                        holder.imgApartment.setImageResource(R.drawable.canho01)
                     }
-                } catch (e: Exception) {
-                    e.printStackTrace()
+                } else {
+                    // Hiển thị ảnh mặc định từ drawable
+                    holder.imgApartment.setImageResource(R.drawable.canho01)
                 }
             }
 

@@ -11,6 +11,7 @@ import com.example.room.database.DatabaseHelper
 import java.text.DecimalFormat
 import android.widget.Button
 import android.widget.Toast
+
 class ApartmentDetailActivity : AppCompatActivity() {
 
     private lateinit var dbHelper: DatabaseHelper
@@ -22,6 +23,10 @@ class ApartmentDetailActivity : AppCompatActivity() {
 
         dbHelper = DatabaseHelper(this)
 
+        // Lấy userId từ SharedPreferences
+        val sharedPref = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+        val userId = sharedPref.getInt("userId", 0)
+
         val btnBack = findViewById<CardView>(R.id.btnBack)
         btnBack.setOnClickListener { finish() }
 
@@ -29,7 +34,7 @@ class ApartmentDetailActivity : AppCompatActivity() {
         val apartmentId = intent.getIntExtra("apartment_id", -1)
 
         if (apartmentId == -1) {
-            android.widget.Toast.makeText(this, "Lỗi: không có ID", android.widget.Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Lỗi: không có ID", Toast.LENGTH_SHORT).show()
             finish()
             return
         }
@@ -37,7 +42,7 @@ class ApartmentDetailActivity : AppCompatActivity() {
         val apartment = dbHelper.getApartmentById(apartmentId)
 
         if (apartment == null) {
-            android.widget.Toast.makeText(this, "Không tìm thấy dữ liệu!", android.widget.Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Không tìm thấy dữ liệu!", Toast.LENGTH_SHORT).show()
             finish()
             return
         }
@@ -54,9 +59,25 @@ class ApartmentDetailActivity : AppCompatActivity() {
         // ====== BUTTON LƯU ======
         val btnSave = findViewById<Button>(R.id.btnSave)
 
+        // Kiểm tra đã lưu chưa
+        val isSaved = dbHelper.isApartmentSaved(apartmentId, userId)
+        btnSave.text = if (isSaved) "Đã lưu" else "Lưu căn hộ"
+
         btnSave.setOnClickListener {
-            dbHelper.insertSavedApartment(apartmentId)
-            Toast.makeText(this, "Đã lưu căn hộ", Toast.LENGTH_SHORT).show()
+            if (userId == 0) {
+                Toast.makeText(this, "Vui lòng đăng nhập để lưu căn hộ", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (dbHelper.isApartmentSaved(apartmentId, userId)) {
+                dbHelper.unsaveApartment(apartmentId, userId)
+                btnSave.text = "Lưu căn hộ"
+                Toast.makeText(this, "Đã bỏ lưu căn hộ", Toast.LENGTH_SHORT).show()
+            } else {
+                dbHelper.saveApartment(apartmentId, userId)
+                btnSave.text = "Đã lưu"
+                Toast.makeText(this, "Đã lưu căn hộ", Toast.LENGTH_SHORT).show()
+            }
         }
 
         // ====== SET DATA ======
@@ -77,7 +98,7 @@ class ApartmentDetailActivity : AppCompatActivity() {
         // ====== BUTTON THUÊ ======
         val btnRent = findViewById<Button>(R.id.btnRent)
 
-// nếu đã thuê thì disable luôn
+        // nếu đã thuê thì disable luôn
         if (apartment.status == "Đã thuê") {
             btnRent.text = "Đã thuê"
             btnRent.isEnabled = false
