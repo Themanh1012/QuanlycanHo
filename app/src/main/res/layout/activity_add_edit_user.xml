@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/dark_bg_main"
+    android:background="@color/bg_main"
     tools:context=".admin.AddEditUserActivity">
 
     <LinearLayout
@@ -17,7 +17,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/dark_bg_header"
+            android:background="@color/bg_header"
             android:orientation="horizontal"
             android:padding="16dp"
             android:gravity="center_vertical">
@@ -35,7 +35,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="Thêm người dùng"
-                android:textColor="@color/dark_text_primary"
+                android:textColor="@color/text_primary"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -63,7 +63,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="U"
-                    android:textColor="@color/dark_text_primary"
+                    android:textColor="@color/text_primary"
                     android:textSize="32sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -73,7 +73,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="Thông tin người dùng"
-                android:textColor="@color/dark_text_secondary"
+                android:textColor="@color/text_secondary"
                 android:textSize="14sp" />
         </LinearLayout>
 
@@ -89,7 +89,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Tên đăng nhập *"
-                android:textColor="@color/dark_text_primary"
+                android:textColor="@color/text_primary"
                 android:textSize="14sp" />
 
             <EditText
@@ -97,12 +97,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginTop="8dp"
-                android:background="@color/dark_bg_card"
+                android:background="@color/bg_card"
                 android:hint="Nhập tên đăng nhập"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
-                android:textColor="@color/dark_text_primary"
-                android:textColorHint="@color/dark_text_secondary"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_secondary"
                 android:singleLine="true" />
 
             <!-- Full Name -->
@@ -111,7 +111,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="Họ và tên *"
-                android:textColor="@color/dark_text_primary"
+                android:textColor="@color/text_primary"
                 android:textSize="14sp" />
 
             <EditText
@@ -119,12 +119,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginTop="8dp"
-                android:background="@color/dark_bg_card"
+                android:background="@color/bg_card"
                 android:hint="Nhập họ và tên"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
-                android:textColor="@color/dark_text_primary"
-                android:textColorHint="@color/dark_text_secondary"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_secondary"
                 android:singleLine="true" />
 
             <!-- Role -->
@@ -133,7 +133,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="Vai trò"
-                android:textColor="@color/dark_text_primary"
+                android:textColor="@color/text_primary"
                 android:textSize="14sp" />
 
             <Spinner
@@ -141,7 +141,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginTop="8dp"
-                android:background="@color/dark_bg_card"
+                android:background="@color/bg_card"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp" />
 
@@ -152,7 +152,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="* Mật khẩu mặc định: 123"
-                android:textColor="@color/dark_text_secondary"
+                android:textColor="@color/text_secondary"
                 android:textSize="12sp"
                 android:visibility="visible" />
 
@@ -165,7 +165,7 @@
                 android:text="LƯU NGƯỜI DÙNG"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                app:backgroundTint="@color/dark_colorAccent"
+                app:backgroundTint="@color/colorAccent"
                 app:cornerRadius="12dp" />
 
         </LinearLayout>

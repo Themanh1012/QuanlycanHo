@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="16dp"
     android:layout_marginVertical="8dp"
-    app:cardBackgroundColor="@color/dark_bg_card"
+    app:cardBackgroundColor="@color/bg_card"
     app:cardCornerRadius="12dp"
     app:cardElevation="4dp">
 
@@ -34,7 +34,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Cho thuê phòng trọ cao cấp"
-                android:textColor="@color/dark_text_primary"
+                android:textColor="@color/text_primary"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:maxLines="2"
@@ -46,7 +46,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="5,000,000 VNĐ/tháng"
-                android:textColor="@color/dark_colorAccent"
+                android:textColor="@color/colorAccent"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
@@ -56,7 +56,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="Quận 10, TP. Hồ Chí Minh"
-                android:textColor="@color/dark_text_secondary"
+                android:textColor="@color/text_secondary"
                 android:textSize="12sp"
                 android:maxLines="1"
                 android:ellipsize="end" />
@@ -70,7 +70,7 @@
                 android:paddingHorizontal="8dp"
                 android:paddingVertical="2dp"
                 android:text="Còn trống"
-                android:textColor="@color/dark_colorSuccess"
+                android:textColor="@color/colorSuccess"
                 android:textSize="11sp"
                 android:textStyle="bold" />
 
