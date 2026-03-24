@@ -354,6 +354,7 @@
                     android:src="@android:drawable/ic_menu_more"
                     android:tint="@color/dark_text_secondary" />
             </LinearLayout>
+
         </androidx.cardview.widget.CardView>
 
         <!-- Manage Users Card -->
@@ -427,6 +428,19 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
+
+    <!-- Button: Xem giao diện khách -->
+    <Button
+        android:id="@+id/btnExitToMain"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="8dp"
+        android:backgroundTint="@color/dark_btn_secondary"
+        android:text="Xem giao diện khách"
+        android:textColor="@color/dark_text_primary"
+        android:textSize="14sp"
+        app:cornerRadius="12dp" />
 
     <!-- Logout Button -->
     <Button

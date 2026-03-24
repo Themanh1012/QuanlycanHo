@@ -38,8 +38,8 @@ class ProfileFragment : Fragment() {
         // Lấy thông tin user từ SharedPreferences
         val sharedPref = requireActivity().getSharedPreferences("UserPrefs", android.content.Context.MODE_PRIVATE)
         val isLoggedIn = sharedPref.getBoolean("IS_LOGGED_IN", false)
-        val userName = sharedPref.getString("FULL_NAME", "Khách hàng")
-        val role = sharedPref.getInt("ROLE", 0)
+        val userName = sharedPref.getString("fullName", "Khách hàng")  // SỬA: fullName thay vì FULL_NAME
+        val role = sharedPref.getInt("role", 0)  // SỬA: role thay vì ROLE
 
         // Hiển thị thông tin user
         tvUserName.text = userName

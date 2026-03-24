@@ -186,7 +186,17 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "QuanLyCanHo.
         writableDatabase.delete("apartments", "id_user=?", arrayOf(id.toString()))
         return writableDatabase.delete("users", "id=?", arrayOf(id.toString()))
     }
+    fun ensureDefaultUsers() {
+        val cursor = readableDatabase.rawQuery("SELECT COUNT(*) FROM users", null)
+        cursor.moveToFirst()
+        val count = cursor.getInt(0)
+        cursor.close()
 
+        if (count == 0) {
+            writableDatabase.execSQL("INSERT INTO users (username, password, fullName, role) VALUES ('admin', '123', 'Quản trị viên', 1)")
+            writableDatabase.execSQL("INSERT INTO users (username, password, fullName, role) VALUES ('khach', '123', 'Khách hàng', 2)")
+        }
+    }
 //CAN HO
 
     fun insertApartment(apartment: Apartment): Long = writableDatabase.insert("apartments", null, ContentValues().apply {

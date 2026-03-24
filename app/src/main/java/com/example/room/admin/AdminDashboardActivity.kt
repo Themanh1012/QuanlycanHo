@@ -12,6 +12,7 @@ import androidx.cardview.widget.CardView
 import com.example.room.R
 import com.example.room.auth.LoginActivity
 import com.example.room.database.DatabaseHelper
+import com.example.room.MainActivity
 
 class AdminDashboardActivity : AppCompatActivity() {
 
@@ -78,6 +79,11 @@ class AdminDashboardActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.btnViewApartments).setOnClickListener {
             startActivity(Intent(this, ManageApartmentsActivity::class.java))
+        }
+
+        findViewById<Button>(R.id.btnExitToMain).setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
         }
 
         findViewById<Button>(R.id.btnLogout).setOnClickListener {

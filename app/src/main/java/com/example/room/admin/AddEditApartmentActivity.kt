@@ -81,7 +81,7 @@ class AddEditApartmentActivity : AppCompatActivity() {
 
     private fun checkMode() {
         isEditMode = intent.getStringExtra("mode") == "edit"
-        apartmentId = intent.getIntExtra("apartmentId", 0)
+        apartmentId = intent.getIntExtra("apartment_id", 0)  // Đổi từ "apartmentId" thành "apartment_id"
 
         if (isEditMode && apartmentId > 0) {
             tvTitle.text = "Sửa căn hộ"
