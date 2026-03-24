@@ -7,6 +7,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
@@ -30,6 +31,7 @@ class ManageApartmentsActivity : AppCompatActivity() {
     private lateinit var etSearchApartment: EditText
     private lateinit var fabAddApartment: FloatingActionButton
     private lateinit var ivBack: ImageView
+    private lateinit var btnExit: Button
     private lateinit var adapter: ApartmentAdapter
 
     private var apartmentList: ArrayList<Apartment> = ArrayList()
@@ -48,9 +50,12 @@ class ManageApartmentsActivity : AppCompatActivity() {
             etSearchApartment = findViewById(R.id.etSearchApartment)
             fabAddApartment = findViewById(R.id.fabAddApartment)
             ivBack = findViewById(R.id.ivBack)
+            btnExit = findViewById(R.id.btnExit)
 
             // Click listeners
             ivBack.setOnClickListener { finish() }
+
+            btnExit.setOnClickListener { finish() }
 
             fabAddApartment.setOnClickListener {
                 val intent = Intent(this, AddEditApartmentActivity::class.java)

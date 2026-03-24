@@ -93,4 +93,14 @@
             app:tint="@color/text_primary" />
     </FrameLayout>
 
+    <!-- Nút Thoát ở dưới cùng -->
+    <Button
+        android:id="@+id/btnExit"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_margin="16dp"
+        android:text="Thoát"
+        android:backgroundTint="@color/colorPrimary"
+        android:textColor="@color/text_primary" />
+
 </LinearLayout>

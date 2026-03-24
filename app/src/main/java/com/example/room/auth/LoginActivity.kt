@@ -27,6 +27,7 @@ class LoginActivity : AppCompatActivity() {
             setContentView(R.layout.activity_login)
 
             dbHelper = DatabaseHelper(this)
+            dbHelper.ensureDefaultUsers() // Đảm bảo có user mặc định
 
             val edtUsername = findViewById<EditText>(R.id.edtUsername)
             val edtPassword = findViewById<EditText>(R.id.edtPassword)
@@ -46,34 +47,30 @@ class LoginActivity : AppCompatActivity() {
                     val user = dbHelper.checkLogin(username, password)
 
                     if (user != null) {
-                        // Lưu thông tin đăng nhập
+                        Toast.makeText(this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show()
+
+                        // SỬA: Dùng UserPrefs và thêm IS_LOGGED_IN
                         val sharedPref = getSharedPreferences("UserPrefs", MODE_PRIVATE)
-                        sharedPref.edit().apply {
-                            putInt("USER_ID", user.id)
-                            putString("USERNAME", user.username)
-                            putString("FULL_NAME", user.fullName)
-                            putInt("ROLE", user.role)
+                        with(sharedPref.edit()) {
+                            putInt("userId", user.id)
+                            putString("username", user.username)
+                            putString("fullName", user.fullName)
+                            putInt("role", user.role)
                             putBoolean("IS_LOGGED_IN", true)
                             apply()
                         }
 
-                        Log.d(TAG, "Login success: ${user.username}, role: ${user.role}")
-
+                        // Điều hướng theo role
                         if (user.role == 1) {
-                            // Admin
-                            Toast.makeText(this, "Chào Admin: ${user.fullName}", Toast.LENGTH_SHORT).show()
+                            // Admin -> AdminDashboardActivity
                             val intent = Intent(this, AdminDashboardActivity::class.java)
-                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                             startActivity(intent)
-                            finish()
                         } else {
-                            // Khách hàng
-                            Toast.makeText(this, "Chào ${user.fullName}", Toast.LENGTH_SHORT).show()
+                            // Khách -> MainActivity
                             val intent = Intent(this, MainActivity::class.java)
-                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                             startActivity(intent)
-                            finish()
                         }
+                        finish()
                     } else {
                         Toast.makeText(this, "Sai tài khoản hoặc mật khẩu!", Toast.LENGTH_SHORT).show()
                     }
