@@ -27,10 +27,14 @@ class HistoryActivity : AppCompatActivity() {
         // DB
         dbHelper = DatabaseHelper(this)
 
+        // Lấy userId từ SharedPreferences
+        val sharedPref = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+        val userId = sharedPref.getInt("userId", 0)
+
         // RecyclerView
         recyclerView = findViewById(R.id.rvHistory)
 
-        val list = dbHelper.getHistoryApartments()
+        val list = dbHelper.getViewHistory(userId)
 
         adapter = ApartmentUserAdapter(list) { apartment ->
             val intent = Intent(this, ApartmentDetailActivity::class.java)
@@ -45,7 +49,11 @@ class HistoryActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        val list = dbHelper.getHistoryApartments()
+        // Lấy userId từ SharedPreferences
+        val sharedPref = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+        val userId = sharedPref.getInt("userId", 0)
+
+        val list = dbHelper.getViewHistory(userId)
         adapter = ApartmentUserAdapter(list) { apartment ->
             val intent = Intent(this, ApartmentDetailActivity::class.java)
             intent.putExtra("apartment_id", apartment.id)

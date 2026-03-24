@@ -45,7 +45,11 @@ class SavedFragment : Fragment() {
     }
 
     private fun loadData() {
+        // Lấy userId từ SharedPreferences
+        val sharedPref = requireActivity().getSharedPreferences("UserPrefs", android.content.Context.MODE_PRIVATE)
+        val userId = sharedPref.getInt("userId", 0)
+
         list.clear()
-        list.addAll(dbHelper.getSavedApartments())
+        list.addAll(dbHelper.getSavedApartments(userId))
     }
 }
