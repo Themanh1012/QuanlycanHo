@@ -7,7 +7,8 @@ import android.database.sqlite.SQLiteOpenHelper
 import com.example.room.model.Apartment
 import com.example.room.model.User
 
-class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "QuanLyCanHo.db", null, 4) {
+
+class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "QuanLyCanHo.db", null, 6) {
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL("""
@@ -24,6 +25,15 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "QuanLyCanHo.
                 description TEXT, area REAL, imagePath TEXT, status TEXT DEFAULT 'Còn trống', id_user INTEGER
             )
         """.trimIndent())
+
+        //lịch sử xem nhà
+        db.execSQL("""
+        CREATE TABLE view_history (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            apartment_id INTEGER,
+            viewed_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    """.trimIndent())
 
         // Insert default users
         insertDefaultUsers(db)
@@ -55,6 +65,25 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "QuanLyCanHo.
         }
         if (oldVersion < 4) {
             insertDefaultUsers(db)
+        }
+
+        if (oldVersion < 5) {
+            db.execSQL("""
+            CREATE TABLE view_history (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                apartment_id INTEGER,
+                viewed_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
+        """.trimIndent())
+        }
+
+        if (oldVersion < 6) {
+            db.execSQL("""
+        CREATE TABLE saved_apartments (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            apartment_id INTEGER
+        )
+    """.trimIndent())
         }
     }
 
@@ -237,4 +266,82 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "QuanLyCanHo.
     fun getAvailableApartmentsCount(): Int = readableDatabase.rawQuery(
         "SELECT COUNT(*) FROM apartments WHERE status = 'Còn trống'", null
     ).use { if (it.moveToFirst()) it.getInt(0) else 0 }
+
+    fun insertViewHistory(apartmentId: Int) {
+        val db = writableDatabase
+        val values = ContentValues()
+        values.put("apartment_id", apartmentId)
+        db.insert("view_history", null, values)
+    }
+
+    fun getHistoryApartments(): ArrayList<Apartment> {
+        val list = ArrayList<Apartment>()
+
+        val db = readableDatabase
+        val cursor = db.rawQuery("""
+        SELECT a.* FROM apartments a
+        INNER JOIN view_history v ON a.id = v.apartment_id
+        ORDER BY v.viewed_at DESC
+    """, null)
+
+        if (cursor.moveToFirst()) {
+            do {
+                list.add(
+                    Apartment(
+                        cursor.getInt(0),
+                        cursor.getString(1),
+                        cursor.getDouble(2),
+                        cursor.getString(3),
+                        cursor.getString(4) ?: "",
+                        cursor.getDouble(5),
+                        cursor.getString(6) ?: "",
+                        cursor.getString(7) ?: "Còn trống",
+                        if (cursor.columnCount > 8) cursor.getInt(8) else 0
+                    )
+                )
+            } while (cursor.moveToNext())
+        }
+
+        cursor.close()
+        return list
+    }
+
+    fun insertSavedApartment(apartmentId: Int) {
+        val db = writableDatabase
+        val values = ContentValues()
+        values.put("apartment_id", apartmentId)
+        db.insert("saved_apartments", null, values)
+    }
+
+    fun getSavedApartments(): ArrayList<Apartment> {
+        val list = ArrayList<Apartment>()
+        val db = readableDatabase
+
+        val cursor = db.rawQuery("""
+        SELECT a.* FROM apartments a
+        INNER JOIN saved_apartments s ON a.id = s.apartment_id
+        ORDER BY s.id DESC
+    """, null)
+
+        if (cursor.moveToFirst()) {
+            do {
+                list.add(
+                    Apartment(
+                        cursor.getInt(0),
+                        cursor.getString(1),
+                        cursor.getDouble(2),
+                        cursor.getString(3),
+                        cursor.getString(4) ?: "",
+                        cursor.getDouble(5),
+                        cursor.getString(6) ?: "",
+                        cursor.getString(7) ?: "Còn trống",
+                        if (cursor.columnCount > 8) cursor.getInt(8) else 0
+                    )
+                )
+            } while (cursor.moveToNext())
+        }
+
+        cursor.close()
+        return list
+    }
 }

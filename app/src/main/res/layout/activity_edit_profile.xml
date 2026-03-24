@@ -6,7 +6,7 @@
     android:background="@color/bg_card"
     android:orientation="vertical">
 
-    <!-- Header / Toolbar -->
+    <!-- Header -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -50,12 +50,13 @@
                 android:layout_height="100dp"
                 app:cardCornerRadius="50dp"
                 android:layout_marginBottom="32dp">
+
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
                     android:src="@android:drawable/sym_def_app_icon" />
-                <!-- Icon Camera đè lên -->
+
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -65,19 +66,22 @@
                     app:tint="@color/bg_card" />
             </androidx.cardview.widget.CardView>
 
-            <!-- Form Edit -->
+            <!-- FORM -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
+                <!-- FULL NAME -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Họ và tên"
                     android:textColor="@color/text_primary"
                     android:textStyle="bold" />
+
                 <EditText
+                    android:id="@+id/edtFullName"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_marginTop="8dp"
@@ -86,17 +90,20 @@
                     android:backgroundTint="@color/divider_color"
                     android:textColor="@color/text_primary"
                     android:textColorHint="@color/text_secondary"
-                    android:text="Trần Thành Đạt"
+                    android:hint="Nhập họ tên"
                     android:paddingStart="12dp"
                     android:paddingEnd="12dp" />
 
+                <!-- USERNAME -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Tên đăng nhập"
                     android:textColor="@color/text_primary"
                     android:textStyle="bold" />
+
                 <EditText
+                    android:id="@+id/edtUsername"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_marginTop="8dp"
@@ -105,10 +112,11 @@
                     android:backgroundTint="@color/divider_color"
                     android:textColor="@color/text_secondary"
                     android:enabled="false"
-                    android:text="khach"
+                    android:hint="Username"
                     android:paddingStart="12dp"
                     android:paddingEnd="12dp" />
 
+                <!-- SAVE BUTTON -->
                 <Button
                     android:id="@+id/btnSaveProfile"
                     android:layout_width="match_parent"
@@ -118,7 +126,8 @@
                     android:text="LƯU THAY ĐỔI"
                     android:textColor="@color/bg_card"
                     android:textStyle="bold"
-                    android:textSize="16sp"/>
+                    android:textSize="16sp" />
+
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
