@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/dark_bg_main"
+    android:background="@color/bg_main"
     android:orientation="vertical"
     tools:context=".admin.ManageUserActivity">
 
@@ -13,7 +13,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/dark_bg_header"
+        android:background="@color/bg_header"
         android:orientation="horizontal"
         android:padding="16dp"
         android:gravity="center_vertical">
@@ -30,7 +30,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="Quản lý người dùng"
-            android:textColor="@color/dark_text_primary"
+            android:textColor="@color/text_primary"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -45,7 +45,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="16dp"
-        android:background="@color/dark_bg_card">
+        android:background="@color/bg_card">
 
         <EditText
             android:id="@+id/etSearch"
@@ -53,8 +53,8 @@
             android:layout_height="48dp"
             android:layout_weight="1"
             android:hint="Tìm kiếm người dùng..."
-            android:textColorHint="@color/dark_text_secondary"
-            android:textColor="@color/dark_text_primary"
+            android:textColorHint="@color/text_secondary"
+            android:textColor="@color/text_primary"
             android:background="@android:color/transparent"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"

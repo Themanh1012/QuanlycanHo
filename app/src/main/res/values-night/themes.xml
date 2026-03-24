@@ -1,22 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Màu chủ đạo -->
-    <color name="colorPrimary">#2563EB</color>
-    <color name="colorAccent">#10B981</color>
+    <color name="colorPrimary">#3B82F6</color>
+    <color name="colorAccent">#EF4444</color>
 
-    <!-- Bảng màu Tối -->
     <color name="bg_main">#121212</color>
     <color name="bg_card">#1E1E1E</color>
+    <color name="bg_header">#1E1E1E</color>
+    <color name="bg_search_bar">#2C2D31</color>
+    <color name="bg_icon_menu">#1E293B</color>
 
     <color name="text_primary">#F9FAFB</color>
     <color name="text_secondary">#9CA3AF</color>
+    <color name="text_hint">#6B7280</color>
+    <color name="text_on_header">#FFFFFF</color>
+    <color name="text_blue">#93C5FD</color>
 
     <color name="icon_color">#D1D5DB</color>
-    <color name="divider_color">#374151</color>
-    <color name="bg_icon_menu">#1E293B</color>
-    <color name="bg_header">#1E1E1E</color>
-    <color name="text_on_header">#FFFFFF</color>
-    <color name="bg_search_bar">#2C2D31</color>
     <color name="icon_circle_color">#9CA3AF</color>
-    <color name="text_blue">#93C5FD</color>
+
+    <color name="btn_primary">#3B82F6</color>
+    <color name="btn_accent">#EF4444</color>
+    <color name="btn_secondary">#262626</color>
+
+    <color name="colorSuccess">#22C55E</color>
+    <color name="colorWarning">#F59E0B</color>
+    <color name="colorError">#EF4444</color>
+
+    <color name="card_blue">#1E3A5F</color>
+    <color name="card_green">#1E3D2F</color>
+    <color name="card_red">#3D1E1E</color>
+    <color name="card_purple">#2D1E3D</color>
+
+    <color name="divider_color">#374151</color>
+    <color name="border_color">#374151</color>
 </resources>
