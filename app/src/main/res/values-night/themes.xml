@@ -1,36 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3B82F6</color>
-    <color name="colorAccent">#EF4444</color>
+    <!-- MÀU CHỦ ĐẠO (Đã được làm dịu thành màu Pastel) -->
+    <color name="colorPrimary">#60A5FA</color> <!-- Xanh dương nhạt, dịu mắt -->
+    <color name="colorAccent">#F87171</color>  <!-- Đỏ san hô nhạt (Giá tiền sẽ hết bị chói) -->
 
+    <!-- Nền và Thẻ -->
     <color name="bg_main">#121212</color>
     <color name="bg_card">#1E1E1E</color>
     <color name="bg_header">#1E1E1E</color>
     <color name="bg_search_bar">#2C2D31</color>
     <color name="bg_icon_menu">#1E293B</color>
 
+    <!-- Màu Chữ -->
     <color name="text_primary">#F9FAFB</color>
     <color name="text_secondary">#9CA3AF</color>
     <color name="text_hint">#6B7280</color>
     <color name="text_on_header">#FFFFFF</color>
     <color name="text_blue">#93C5FD</color>
 
+    <!-- Màu Icon -->
     <color name="icon_color">#D1D5DB</color>
     <color name="icon_circle_color">#9CA3AF</color>
 
-    <color name="btn_primary">#3B82F6</color>
-    <color name="btn_accent">#EF4444</color>
+    <!-- NÚT BẤM (Cũng dùng màu nhạt để hài hòa với nền đen) -->
+    <color name="btn_primary">#60A5FA</color> <!-- Nút "Chi tiết" xanh lơ dịu -->
+    <color name="btn_accent">#F87171</color>
     <color name="btn_secondary">#262626</color>
 
-    <color name="colorSuccess">#22C55E</color>
-    <color name="colorWarning">#F59E0B</color>
-    <color name="colorError">#EF4444</color>
+    <!-- Màu Trạng thái (Thành công, Lỗi...) -->
+    <color name="colorSuccess">#34D399</color> <!-- Xanh lá pastel -->
+    <color name="colorWarning">#FBBF24</color> <!-- Vàng pastel -->
+    <color name="colorError">#F87171</color>   <!-- Đỏ pastel -->
 
+    <!-- Nền Card hiệu ứng -->
     <color name="card_blue">#1E3A5F</color>
     <color name="card_green">#1E3D2F</color>
     <color name="card_red">#3D1E1E</color>
     <color name="card_purple">#2D1E3D</color>
 
+    <!-- Đường viền kẻ -->
     <color name="divider_color">#374151</color>
     <color name="border_color">#374151</color>
 </resources>
