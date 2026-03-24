@@ -90,4 +90,13 @@ class ProfileFragment : Fragment() {
 
         return view
     }
+    override fun onResume() {
+        super.onResume()
+
+        val sharedPref = requireActivity().getSharedPreferences("UserPrefs", android.content.Context.MODE_PRIVATE)
+        val userName = sharedPref.getString("FULL_NAME", "Khách hàng")
+
+        tvUserName.text = userName
+    }
+
 }

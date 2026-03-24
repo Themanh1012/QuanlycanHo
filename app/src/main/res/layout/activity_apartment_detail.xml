@@ -1,27 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_card"
-    tools:context=".listing.ApartmentDetailActivity">
+    android:background="@color/bg_card">
 
-    <!-- Phần nội dung cuộn được -->
+    <!-- CONTENT -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginBottom="12dp"
         android:scrollbars="none"
-        app:layout_constraintBottom_toTopOf="@+id/bottomActionLayout"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/bottomActionLayout">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Ảnh Cover Căn Hộ -->
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <!-- IMAGE -->
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="250dp">
 
@@ -29,188 +28,151 @@
                     android:id="@+id/imgApartment"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@color/divider_color"
                     android:scaleType="centerCrop"
                     android:src="@android:drawable/ic_menu_gallery" />
 
-                <!-- Nút Back (Quay lại) -->
                 <androidx.cardview.widget.CardView
                     android:id="@+id/btnBack"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="32dp"
+                    android:layout_margin="16dp"
                     app:cardBackgroundColor="#80000000"
-                    app:cardCornerRadius="20dp"
-                    app:cardElevation="0dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    app:cardCornerRadius="20dp">
 
                     <ImageView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:layout_gravity="center"
                         android:src="@android:drawable/ic_menu_revert"
-                        app:tint="@color/bg_card" />
+                        app:tint="@android:color/white" />
                 </androidx.cardview.widget.CardView>
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </FrameLayout>
 
-            <!-- Khối thông tin chính -->
+            <!-- INFO -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="20dp">
 
+                <!-- TITLE -->
                 <TextView
+                    android:id="@+id/tvTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Căn hộ Studio Full Nội Thất ngõ rộng ô tô đỗ cửa"
                     android:textColor="@color/text_primary"
                     android:textSize="22sp"
                     android:textStyle="bold" />
 
+                <!-- PRICE -->
                 <TextView
+                    android:id="@+id/tvPrice"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="5.500.000 đ/tháng"
                     android:textColor="#2563EB"
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
+                <!-- ADDRESS -->
                 <TextView
+                    android:id="@+id/tvAddress"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:drawablePadding="8dp"
-                    android:text="Quận 10, TP. Hồ Chí Minh"
                     android:textColor="@color/text_secondary"
-                    android:textSize="15sp"
-                    app:drawableStartCompat="@android:drawable/ic_dialog_map"
-                    app:drawableTint="@color/text_secondary" />
+                    android:textSize="15sp" />
 
-                <!-- Đường kẻ ngang -->
+                <!-- DIVIDER -->
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginVertical="16dp"
                     android:background="@color/bg_main" />
 
-                <!-- Thông số chi tiết (Badges) -->
+                <!-- INFO ROW -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <!-- Diện tích -->
+                    <!-- AREA -->
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:background="@drawable/ic_launcher_background"
-                        android:backgroundTint="#EFF6FF"
                         android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="12dp">
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@android:drawable/ic_menu_crop"
-                            app:tint="#2563EB" />
+                        android:orientation="vertical">
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="35 m2"
-                            android:textColor="@color/text_primary"
+                            android:text="Diện tích"
+                            android:textSize="12sp"
+                            android:textColor="@color/text_secondary" />
+
+                        <TextView
+                            android:id="@+id/tvArea"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="14sp"
                             android:textStyle="bold" />
                     </LinearLayout>
 
-                    <Space
-                        android:layout_width="12dp"
-                        android:layout_height="wrap_content" />
-
-                    <!-- Phòng ngủ -->
+                    <!-- STATUS -->
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:background="@drawable/ic_launcher_background"
-                        android:backgroundTint="#EFF6FF"
                         android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="12dp">
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@android:drawable/ic_menu_sort_by_size"
-                            app:tint="#2563EB" />
+                        android:orientation="vertical">
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="1 PN"
-                            android:textColor="@color/text_primary"
-                            android:textStyle="bold" />
-                    </LinearLayout>
+                            android:text="Trạng thái"
+                            android:textSize="12sp"
+                            android:textColor="@color/text_secondary" />
 
-                    <Space
-                        android:layout_width="12dp"
-                        android:layout_height="wrap_content" />
-
-                    <!-- Tình trạng -->
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="@drawable/ic_launcher_background"
-                        android:backgroundTint="#EFF6FF"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="12dp">
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@android:drawable/ic_menu_info_details"
-                            app:tint="#2563EB" />
                         <TextView
+                            android:id="@+id/tvStatus"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="Trống"
-                            android:textColor="#10B981"
+                            android:textSize="14sp"
                             android:textStyle="bold" />
                     </LinearLayout>
                 </LinearLayout>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="16dp"
-                    android:background="@color/bg_main" />
-
-                <!-- Mô tả chi tiết -->
+                <!-- DESCRIPTION -->
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Mô tả chi tiết"
-                    android:textColor="@color/text_primary"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:layout_marginTop="16dp"
+                    android:text="Mô tả"
+                    android:textStyle="bold"
+                    android:textSize="18sp" />
 
                 <TextView
+                    android:id="@+id/tvDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:lineSpacingExtra="6dp"
-                    android:text="- Cho thuê phòng trọ studio rộng rãi, thoáng mát.\n- Có sẵn nội thất cơ bản: giường, tủ quần áo, máy lạnh, máy nước nóng.\n- Khu vực an ninh, yên tĩnh, có camera 24/7.\n- Giờ giấc tự do, không chung chủ.\n- Gần chợ, siêu thị, cửa hàng tiện lợi."
-                    android:textColor="#4B5563"
+                    android:textColor="@color/text_secondary"
                     android:textSize="15sp" />
 
-                <!-- Spacer để nội dung không bị che bởi thanh dưới cùng -->
+                <Button
+                    android:id="@+id/btnSave"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="12dp"
+                    android:text="Yêu thích"
+                    android:textAllCaps="false"
+                    android:textSize="13sp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:backgroundTint="#374151"
+                    android:textColor="@android:color/white"/>
+
                 <Space
                     android:layout_width="match_parent"
                     android:layout_height="40dp"/>
@@ -218,61 +180,28 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- Thanh Công Cụ Cố Định (Sticky Bottom Action Bar) -->
+    <!-- BOTTOM -->
     <LinearLayout
         android:id="@+id/bottomActionLayout"
         android:layout_width="match_parent"
-        android:layout_height="72dp"
-        android:background="@color/bg_card"
-        android:elevation="16dp"
-        android:gravity="center_vertical"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="16dp"
+        android:background="@color/bg_card"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <!-- Nút Lưu -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            app:cardBackgroundColor="@color/bg_main"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="0dp">
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_gravity="center"
-                android:src="@android:drawable/btn_star_big_off"
-                app:tint="@color/text_secondary" />
-        </androidx.cardview.widget.CardView>
-
-        <Space
-            android:layout_width="16dp"
-            android:layout_height="wrap_content" />
-
-        <!-- Nút Gọi điện -->
         <Button
-            android:layout_width="0dp"
+            android:id="@+id/btnRent"
+            android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_weight="1"
+            android:text="Thuê ngay"
             android:backgroundTint="#10B981"
-            android:text="GỌI ĐIỆN"
-            android:textColor="@color/bg_card"
-            android:textStyle="bold" />
-
-        <Space
-            android:layout_width="8dp"
-            android:layout_height="wrap_content" />
-
-        <!-- Nút Nhắn tin -->
-        <Button
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_weight="1"
-            android:backgroundTint="#2563EB"
-            android:text="NHẮN TIN"
-            android:textColor="@color/bg_card"
-            android:textStyle="bold" />
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:layout_marginTop="4dp"/>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
