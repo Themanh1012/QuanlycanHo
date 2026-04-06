@@ -9,12 +9,7 @@ import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
@@ -25,7 +20,6 @@ import com.example.room.database.DatabaseHelper
 import com.example.room.model.Apartment
 import java.io.File
 import java.io.FileOutputStream
-import java.io.InputStream
 
 class AddEditApartmentActivity : AppCompatActivity() {
 
@@ -33,6 +27,7 @@ class AddEditApartmentActivity : AppCompatActivity() {
     private var apartmentId: Int = 0
     private var isEditMode = false
     private var selectedImagePath: String = ""
+    private var selectedBadge: String = ""
 
     private lateinit var tvTitle: TextView
     private lateinit var edtTitle: EditText
@@ -46,6 +41,7 @@ class AddEditApartmentActivity : AppCompatActivity() {
     private lateinit var cardImageUpload: CardView
     private lateinit var btnDelete: Button
     private lateinit var btnSave: TextView
+    private lateinit var spinnerBadge: Spinner
 
     companion object {
         private const val PICK_IMAGE_REQUEST = 1001
@@ -58,6 +54,7 @@ class AddEditApartmentActivity : AppCompatActivity() {
 
         dbHelper = DatabaseHelper(this)
         initViews()
+        setupBadgeSpinner()
         checkMode()
         setupClickListeners()
     }
@@ -75,6 +72,23 @@ class AddEditApartmentActivity : AppCompatActivity() {
         cardImageUpload = findViewById(R.id.cardImageUpload)
         btnDelete = findViewById(R.id.btnDelete)
         btnSave = findViewById(R.id.btnSave)
+        
+        spinnerBadge = Spinner(this)
+        val layout = findViewById<LinearLayout>(R.id.layoutContainer)
+        val tvLabel = TextView(this).apply {
+            text = "Danh hiệu căn hộ"
+            textSize = 14f
+            setPadding(0, 16, 0, 4)
+        }
+        layout.addView(tvLabel, layout.indexOfChild(findViewById(R.id.edtDescription)))
+        layout.addView(spinnerBadge, layout.indexOfChild(tvLabel) + 1)
+    }
+
+    private fun setupBadgeSpinner() {
+        val badges = arrayOf("Không có", "VIP KIM CƯƠNG", "HẠNG VÀNG", "HẠNG BẠC", "GIẢM GIÁ HOT")
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, badges)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerBadge.adapter = adapter
     }
 
     private fun checkMode() {
@@ -100,6 +114,10 @@ class AddEditApartmentActivity : AppCompatActivity() {
             edtAddress.setText(it.address)
             edtDescription.setText(it.description)
             edtArea.setText(if (it.area > 0) it.area.toLong().toString() else "")
+            
+            val badges = arrayOf("Không có", "VIP KIM CƯƠNG", "HẠNG VÀNG", "HẠNG BẠC", "GIẢM GIÁ HOT")
+            val index = badges.indexOf(it.badge)
+            if (index >= 0) spinnerBadge.setSelection(index)
 
             if (it.imagePath.isNotEmpty()) {
                 selectedImagePath = it.imagePath
@@ -110,6 +128,17 @@ class AddEditApartmentActivity : AppCompatActivity() {
 
     private fun loadImage(path: String) {
         try {
+            if (!path.contains("/") && !path.contains("\\")) {
+                val resId = resources.getIdentifier(path, "drawable", packageName)
+                if (resId != 0) {
+                    imgApartment.setImageResource(resId)
+                    imgApartment.visibility = View.VISIBLE
+                    layoutPlaceholder.visibility = View.GONE
+                    btnChangeImage.visibility = View.VISIBLE
+                    return
+                }
+            }
+
             val imgFile = File(path)
             if (imgFile.exists()) {
                 val bitmap = BitmapFactory.decodeFile(imgFile.absolutePath)
@@ -122,7 +151,6 @@ class AddEditApartmentActivity : AppCompatActivity() {
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            Toast.makeText(this, "Không thể tải ảnh", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -184,7 +212,7 @@ class AddEditApartmentActivity : AppCompatActivity() {
     }
 
     private fun showDrawableImages() {
-        val drawableNames = arrayOf("canho01", "batdongsan", "thadaen")
+        val drawableNames = arrayOf("canho01", "canho02", "canho03", "batdongsan", "landmark", "thaodien", "vinhomes", "bietthu", "chungcu", "studio")
         val existingDrawables = drawableNames.filter { name ->
             resources.getIdentifier(name, "drawable", packageName) != 0
         }.toTypedArray()
@@ -200,48 +228,14 @@ class AddEditApartmentActivity : AppCompatActivity() {
                 val drawableName = existingDrawables[which]
                 val drawableId = resources.getIdentifier(drawableName, "drawable", packageName)
                 if (drawableId != 0) {
-                    val path = copyDrawableToStorage(drawableId)
-                    if (path.isNotEmpty()) {
-                        selectedImagePath = path
-                        loadImage(selectedImagePath)
-                        Toast.makeText(this, "Đã chọn ảnh mẫu", Toast.LENGTH_SHORT).show()
-                    }
+                    selectedImagePath = drawableName 
+                    imgApartment.setImageResource(drawableId)
+                    imgApartment.visibility = View.VISIBLE
+                    layoutPlaceholder.visibility = View.GONE
+                    btnChangeImage.visibility = View.VISIBLE
                 }
             }
             .show()
-    }
-
-    private fun copyDrawableToStorage(drawableId: Int): String {
-        return try {
-            val imageDir = File(filesDir, "apartment_images")
-            if (!imageDir.exists()) imageDir.mkdirs()
-
-            val fileName = "drawable_${System.currentTimeMillis()}.png"
-            val imageFile = File(imageDir, fileName)
-            val bitmap = BitmapFactory.decodeResource(resources, drawableId)
-            val outputStream = FileOutputStream(imageFile)
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
-            outputStream.flush()
-            outputStream.close()
-            imageFile.absolutePath
-        } catch (e: Exception) {
-            e.printStackTrace()
-            ""
-        }
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            PERMISSION_REQUEST_CODE -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) openGallery()
-                else Toast.makeText(this, "Cần cấp quyền truy cập ảnh!", Toast.LENGTH_LONG).show()
-            }
-            2001 -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) openCamera()
-                else Toast.makeText(this, "Cần cấp quyền Camera!", Toast.LENGTH_LONG).show()
-            }
-        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -283,11 +277,10 @@ class AddEditApartmentActivity : AppCompatActivity() {
                     imgApartment.visibility = View.VISIBLE
                     layoutPlaceholder.visibility = View.GONE
                     btnChangeImage.visibility = View.VISIBLE
-                    Toast.makeText(this, "Đã chọn ảnh", Toast.LENGTH_SHORT).show()
                 }
             }
         } catch (e: Exception) {
-            Toast.makeText(this, "Lỗi: ${e.message}", Toast.LENGTH_LONG).show()
+            e.printStackTrace()
         }
     }
 
@@ -306,9 +299,8 @@ class AddEditApartmentActivity : AppCompatActivity() {
             imgApartment.visibility = View.VISIBLE
             layoutPlaceholder.visibility = View.GONE
             btnChangeImage.visibility = View.VISIBLE
-            Toast.makeText(this, "Đã chụp ảnh", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
-            Toast.makeText(this, "Lỗi: ${e.message}", Toast.LENGTH_LONG).show()
+            e.printStackTrace()
         }
     }
 
@@ -318,6 +310,7 @@ class AddEditApartmentActivity : AppCompatActivity() {
         val address = edtAddress.text.toString().trim()
         val description = edtDescription.text.toString().trim()
         val areaStr = edtArea.text.toString().trim()
+        val badge = if (spinnerBadge.selectedItemPosition == 0) "" else spinnerBadge.selectedItem.toString()
 
         if (title.isEmpty()) { Toast.makeText(this, "Vui lòng nhập tiêu đề!", Toast.LENGTH_SHORT).show(); return }
         if (priceStr.isEmpty()) { Toast.makeText(this, "Vui lòng nhập giá thuê!", Toast.LENGTH_SHORT).show(); return }
@@ -335,7 +328,8 @@ class AddEditApartmentActivity : AppCompatActivity() {
             area = area,
             imagePath = selectedImagePath,
             status = "Còn trống",
-            id_user = 1
+            id_user = 1,
+            badge = badge
         )
 
         val result = if (isEditMode) dbHelper.updateApartment(apartment) else dbHelper.insertApartment(apartment).toInt()

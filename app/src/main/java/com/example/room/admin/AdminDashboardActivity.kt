@@ -1,5 +1,8 @@
 package com.example.room.admin
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -79,6 +82,21 @@ class AdminDashboardActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.btnViewApartments).setOnClickListener {
             startActivity(Intent(this, ManageApartmentsActivity::class.java))
+        }
+
+        findViewById<Button>(R.id.btnExportJson).setOnClickListener {
+            val jsonString = dbHelper.exportApartmentsToJson()
+            
+
+            val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clip = ClipData.newPlainText("Apartments JSON", jsonString)
+            clipboard.setPrimaryClip(clip)
+
+            AlertDialog.Builder(this)
+                .setTitle("Xuất dữ liệu thành công")
+                .setMessage("Dữ liệu JSON đã được copy vào bộ nhớ tạm.\n\nHãy dán nội dung này vào file 'app/src/main/assets/apartments.json' trong project Android Studio của bạn, sau đó Push Git để người khác thấy.")
+                .setPositiveButton("Đã hiểu", null)
+                .show()
         }
 
         findViewById<Button>(R.id.btnExitToMain).setOnClickListener {

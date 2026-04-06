@@ -30,7 +30,6 @@ class ApartmentDetailActivity : AppCompatActivity() {
         val btnBack = findViewById<CardView>(R.id.btnBack)
         btnBack.setOnClickListener { finish() }
 
-        // ====== NHẬN ID ======
         val apartmentId = intent.getIntExtra("apartment_id", -1)
 
         if (apartmentId == -1) {
@@ -55,11 +54,22 @@ class ApartmentDetailActivity : AppCompatActivity() {
         val tvStatus = findViewById<TextView>(R.id.tvStatus)
         val tvDescription = findViewById<TextView>(R.id.tvDescription)
         val imgApartment = findViewById<ImageView>(R.id.imgApartment)
+        val btnSave = findViewById<Button>(R.id.btnSave)
+        val btnRent = findViewById<Button>(R.id.btnRent)
+
+        // ====== CHECK STATUS ======
+        if (apartment.status == "Đã thuê") {
+            btnRent.text = "Đã thuê"
+            btnRent.isEnabled = false
+            
+            // Hiển thị thêm thông tin người thuê nếu là Admin (tùy chọn)
+            val renter = apartment.id_renter?.let { dbHelper.getUserById(it) }
+            renter?.let {
+                tvStatus.text = "Đã thuê bởi: ${it.fullName}"
+            }
+        }
 
         // ====== BUTTON LƯU ======
-        val btnSave = findViewById<Button>(R.id.btnSave)
-
-        // Kiểm tra đã lưu chưa
         val isSaved = dbHelper.isApartmentSaved(apartmentId, userId)
         btnSave.text = if (isSaved) "Đã lưu" else "Lưu căn hộ"
 
@@ -72,61 +82,57 @@ class ApartmentDetailActivity : AppCompatActivity() {
             if (dbHelper.isApartmentSaved(apartmentId, userId)) {
                 dbHelper.unsaveApartment(apartmentId, userId)
                 btnSave.text = "Lưu căn hộ"
-                Toast.makeText(this, "Đã bỏ lưu căn hộ", Toast.LENGTH_SHORT).show()
             } else {
                 dbHelper.saveApartment(apartmentId, userId)
                 btnSave.text = "Đã lưu"
-                Toast.makeText(this, "Đã lưu căn hộ", Toast.LENGTH_SHORT).show()
             }
         }
 
         // ====== SET DATA ======
         tvTitle.text = apartment.title
         tvAddress.text = apartment.address
-
         val formatter = DecimalFormat("#,###")
         tvPrice.text = formatter.format(apartment.price) + " VND/tháng"
-
         tvArea.text = "${apartment.area} m²"
-        tvStatus.text = apartment.status
-
-        tvDescription.text =
-            if (apartment.description.isNotEmpty())
-                apartment.description
-            else "Không có mô tả"
+        if (apartment.status != "Đã thuê") tvStatus.text = apartment.status
+        tvDescription.text = if (apartment.description.isNotEmpty()) apartment.description else "Không có mô tả"
 
         // ====== BUTTON THUÊ ======
-        val btnRent = findViewById<Button>(R.id.btnRent)
-
-        // nếu đã thuê thì disable luôn
-        if (apartment.status == "Đã thuê") {
-            btnRent.text = "Đã thuê"
-            btnRent.isEnabled = false
-        }
-
         btnRent.setOnClickListener {
+            if (userId == 0) {
+                Toast.makeText(this, "Vui lòng đăng nhập để thuê!", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             if (apartment.status == "Đã thuê") {
                 Toast.makeText(this, "Căn hộ đã được thuê!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            // update DB
-            val updatedApartment = apartment.copy(status = "Đã thuê")
-            dbHelper.updateApartment(updatedApartment)
+            // GỌI HÀM THUÊ MỚI TRONG DATABASE HELPER
+            val result = dbHelper.rentApartment(apartmentId, userId)
 
-            // update UI
-            tvStatus.text = "Đã thuê"
-            btnRent.text = "Đã thuê"
-            btnRent.isEnabled = false
-
-            Toast.makeText(this, "Thuê thành công!", Toast.LENGTH_SHORT).show()
+            if (result > 0) {
+                tvStatus.text = "Đã thuê"
+                btnRent.text = "Đã thuê"
+                btnRent.isEnabled = false
+                Toast.makeText(this, "Thuê thành công!", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "Lỗi khi thuê, thử lại sau!", Toast.LENGTH_SHORT).show()
+            }
         }
+
         // ====== LOAD IMAGE ======
         if (apartment.imagePath.isNotEmpty()) {
-            val file = java.io.File(apartment.imagePath)
-            if (file.exists()) {
-                val bitmap = android.graphics.BitmapFactory.decodeFile(file.absolutePath)
-                imgApartment.setImageBitmap(bitmap)
+            if (!apartment.imagePath.contains("/") && !apartment.imagePath.contains("\\")) {
+                val resId = resources.getIdentifier(apartment.imagePath, "drawable", packageName)
+                if (resId != 0) imgApartment.setImageResource(resId)
+            } else {
+                val file = java.io.File(apartment.imagePath)
+                if (file.exists()) {
+                    val bitmap = android.graphics.BitmapFactory.decodeFile(file.absolutePath)
+                    imgApartment.setImageBitmap(bitmap)
+                }
             }
         }
     }
