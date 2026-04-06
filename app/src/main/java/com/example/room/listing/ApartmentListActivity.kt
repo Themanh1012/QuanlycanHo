@@ -27,7 +27,7 @@ class ApartmentListActivity : AppCompatActivity() {
         loadData()
 
         adapter = ApartmentUserAdapter(list) { apartment ->
-            // click → mở chi tiết
+
         }
 
         recyclerView.layoutManager = LinearLayoutManager(this)

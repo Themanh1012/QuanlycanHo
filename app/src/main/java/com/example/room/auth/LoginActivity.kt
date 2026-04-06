@@ -27,7 +27,7 @@ class LoginActivity : AppCompatActivity() {
             setContentView(R.layout.activity_login)
 
             dbHelper = DatabaseHelper(this)
-            dbHelper.ensureDefaultUsers() // Đảm bảo có user mặc định
+            dbHelper.ensureDefaultUsers()
 
             val edtUsername = findViewById<EditText>(R.id.edtUsername)
             val edtPassword = findViewById<EditText>(R.id.edtPassword)
@@ -49,7 +49,7 @@ class LoginActivity : AppCompatActivity() {
                     if (user != null) {
                         Toast.makeText(this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show()
 
-                        // SỬA: Dùng UserPrefs và thêm IS_LOGGED_IN
+
                         val sharedPref = getSharedPreferences("UserPrefs", MODE_PRIVATE)
                         with(sharedPref.edit()) {
                             putInt("userId", user.id)
@@ -60,13 +60,13 @@ class LoginActivity : AppCompatActivity() {
                             apply()
                         }
 
-                        // Điều hướng theo role
+
                         if (user.role == 1) {
-                            // Admin -> AdminDashboardActivity
+
                             val intent = Intent(this, AdminDashboardActivity::class.java)
                             startActivity(intent)
                         } else {
-                            // Khách -> MainActivity
+
                             val intent = Intent(this, MainActivity::class.java)
                             startActivity(intent)
                         }

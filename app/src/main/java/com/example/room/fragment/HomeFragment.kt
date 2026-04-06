@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import com.example.room.listing.AddPostActivity
 import com.example.room.listing.ApartmentDetailActivity
@@ -22,6 +21,8 @@ import android.widget.TextView
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
+import android.os.Handler
+import android.os.Looper
 
 class HomeFragment : Fragment() {
 
@@ -29,39 +30,34 @@ class HomeFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: ApartmentUserAdapter
     private var list = ArrayList<Apartment>()
-
+    private lateinit var tvGreeting: TextView
     private lateinit var edtSearch: EditText
+    
+    private val searchHandler = Handler(Looper.getMainLooper())
+    private var searchRunnable: Runnable? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         val view = inflater.inflate(R.layout.fragment_home, container, false)
 
-        val tvGreeting = view.findViewById<TextView>(R.id.tvGreeting)
+        tvGreeting = view.findViewById(R.id.tvGreeting)
+        updateGreeting()
 
-        val sharedPref = requireActivity().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
-        val fullName = sharedPref.getString("FULL_NAME", "User")
-
-        tvGreeting.text = "Xin chào, $fullName!"
-
-        //thanh tìm kiếm
         edtSearch = view.findViewById(R.id.edtSearch)
-
         edtSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-
             override fun afterTextChanged(s: Editable?) {
-                filterData(s.toString())
+                searchRunnable?.let { searchHandler.removeCallbacks(it) }
+                searchRunnable = Runnable { filterData(s.toString()) }
+                searchHandler.postDelayed(searchRunnable!!, 300)
             }
         })
 
         dbHelper = DatabaseHelper(requireContext())
 
-        // ====== SECTION SWITCH ======
         val sectionApartments = view.findViewById<View>(R.id.sectionApartments)
         val sectionMotels = view.findViewById<View>(R.id.sectionMotels)
 
@@ -75,7 +71,6 @@ class HomeFragment : Fragment() {
             sectionMotels.visibility = View.VISIBLE
         }
 
-        // ====== VIEW ALL ======
         view.findViewById<View>(R.id.tvViewAllApartments).setOnClickListener {
             startActivity(Intent(requireActivity(), ApartmentListActivity::class.java))
         }
@@ -84,17 +79,12 @@ class HomeFragment : Fragment() {
             startActivity(Intent(requireActivity(), MotelListActivity::class.java))
         }
 
-        // ====== ADD POST ======
         view.findViewById<View>(R.id.btnNavAddPost).setOnClickListener {
             startActivity(Intent(requireActivity(), AddPostActivity::class.java))
         }
 
-        // ====== 🔥 RECYCLER VIEW ======
         recyclerView = view.findViewById(R.id.rvFeatured)
-
         loadData()
-
-
 
         adapter = ApartmentUserAdapter(list) { apartment ->
             val intent = Intent(requireActivity(), ApartmentDetailActivity::class.java)
@@ -104,27 +94,31 @@ class HomeFragment : Fragment() {
 
         recyclerView.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-
         recyclerView.adapter = adapter
 
         return view
     }
 
+    private fun updateGreeting() {
+        val sharedPref = requireActivity().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+        val fullName = sharedPref.getString("fullName", "Khách hàng")
+        tvGreeting.text = "Xin chào, $fullName!"
+    }
+
     override fun onResume() {
         super.onResume()
+        updateGreeting()
         loadData()
         adapter.notifyDataSetChanged()
     }
 
-
     private fun loadData() {
         list.clear()
-        list.addAll(dbHelper.getAllApartments().take(5)) // lấy 5 cái nổi bật
+        list.addAll(dbHelper.getAllApartments().take(5))
     }
 
     private fun filterData(keyword: String) {
         val allList = dbHelper.getAllApartments()
-
         val filtered = if (keyword.isEmpty()) {
             allList
         } else {
@@ -133,10 +127,8 @@ class HomeFragment : Fragment() {
                         it.address.contains(keyword, true)
             }
         }
-
         list.clear()
         list.addAll(filtered.take(5))
-
         adapter.notifyDataSetChanged()
     }
 }

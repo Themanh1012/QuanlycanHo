@@ -45,14 +45,13 @@
             android:tint="@color/text_primary" />
     </LinearLayout>
 
-    <!-- Stats Cards Grid - Row 1 -->
+    <!-- Stats Cards Grid -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:orientation="horizontal">
 
-        <!-- Card: Total Apartments -->
         <androidx.cardview.widget.CardView
             android:layout_width="0dp"
             android:layout_height="90dp"
@@ -67,23 +66,14 @@
                 android:gravity="center"
                 android:orientation="vertical"
                 android:padding="12dp">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@android:drawable/ic_dialog_map"
-                    android:tint="#60A5FA" />
-
                 <TextView
                     android:id="@+id/tvTotalApartments"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
                     android:text="0"
                     android:textColor="#60A5FA"
                     android:textSize="22sp"
                     android:textStyle="bold" />
-
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -93,7 +83,6 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Card: Available -->
         <androidx.cardview.widget.CardView
             android:layout_width="0dp"
             android:layout_height="90dp"
@@ -109,23 +98,14 @@
                 android:gravity="center"
                 android:orientation="vertical"
                 android:padding="12dp">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@android:drawable/checkbox_on_background"
-                    android:tint="#4ADE80" />
-
                 <TextView
                     android:id="@+id/tvAvailableCount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
                     android:text="0"
                     android:textColor="#4ADE80"
                     android:textSize="22sp"
                     android:textStyle="bold" />
-
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -136,7 +116,7 @@
         </androidx.cardview.widget.CardView>
     </LinearLayout>
 
-    <!-- Stats Cards Grid - Row 2 -->
+    <!-- Row 2 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -144,7 +124,6 @@
         android:layout_marginTop="8dp"
         android:orientation="horizontal">
 
-        <!-- Card: Rented -->
         <androidx.cardview.widget.CardView
             android:layout_width="0dp"
             android:layout_height="90dp"
@@ -159,23 +138,14 @@
                 android:gravity="center"
                 android:orientation="vertical"
                 android:padding="12dp">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@android:drawable/ic_lock_idle_lock"
-                    android:tint="#F87171" />
-
                 <TextView
                     android:id="@+id/tvRentedCount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
                     android:text="0"
                     android:textColor="#F87171"
                     android:textSize="22sp"
                     android:textStyle="bold" />
-
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -185,7 +155,6 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Card: Users -->
         <androidx.cardview.widget.CardView
             android:layout_width="0dp"
             android:layout_height="90dp"
@@ -201,23 +170,14 @@
                 android:gravity="center"
                 android:orientation="vertical"
                 android:padding="12dp">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@android:drawable/ic_menu_myplaces"
-                    android:tint="#C084FC" />
-
                 <TextView
                     android:id="@+id/tvTotalUsers"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
                     android:text="0"
                     android:textColor="#C084FC"
                     android:textSize="22sp"
                     android:textStyle="bold" />
-
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -228,7 +188,7 @@
         </androidx.cardview.widget.CardView>
     </LinearLayout>
 
-    <!-- Section: Quick Actions -->
+    <!-- Quick Actions -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -239,7 +199,6 @@
         android:textSize="16sp"
         android:textStyle="bold" />
 
-    <!-- Quick Actions Row -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -253,9 +212,9 @@
             android:layout_height="48dp"
             android:layout_weight="1"
             android:backgroundTint="@color/btn_primary"
-            android:text="+ Thêm căn hộ"
+            android:text="+ Thêm"
             android:textColor="@color/text_primary"
-            android:textSize="14sp"
+            android:textSize="12sp"
             android:textStyle="bold"
             app:cornerRadius="12dp" />
 
@@ -263,173 +222,78 @@
             android:id="@+id/btnViewApartments"
             android:layout_width="0dp"
             android:layout_height="48dp"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="4dp"
             android:layout_weight="1"
             android:backgroundTint="@color/btn_secondary"
-            android:text="Xem danh sách"
+            android:text="Danh sách"
             android:textColor="@color/text_primary"
-            android:textSize="14sp"
+            android:textSize="12sp"
+            app:cornerRadius="12dp" />
+
+        <!-- NÚT MỚI: XUẤT DỮ LIỆU -->
+        <Button
+            android:id="@+id/btnExportJson"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="4dp"
+            android:layout_weight="1"
+            android:backgroundTint="#FF9800"
+            android:text="Xuất Git"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
             app:cornerRadius="12dp" />
     </LinearLayout>
 
-    <!-- Section: Management -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="20dp"
-        android:text="Quản lý"
-        android:textColor="@color/text_primary"
-        android:textSize="16sp"
-        android:textStyle="bold" />
-
-    <!-- Menu Items -->
+    <!-- Management Sections -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="20dp"
         android:orientation="vertical">
 
-        <!-- Manage Apartments Card -->
         <androidx.cardview.widget.CardView
             android:id="@+id/cardManageApartments"
             android:layout_width="match_parent"
-            android:layout_height="70dp"
+            android:layout_height="60dp"
             android:layout_marginBottom="8dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?attr/selectableItemBackground"
             app:cardBackgroundColor="@color/bg_card"
             app:cardCornerRadius="12dp"
             app:cardElevation="0dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="16dp">
-
-                <LinearLayout
-                    android:layout_width="44dp"
-                    android:layout_height="44dp"
-                    android:background="@drawable/bg_circle"
-                    android:gravity="center">
-
-                    <ImageView
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
-                        android:src="@android:drawable/ic_dialog_map"
-                        android:tint="@color/colorPrimary" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Quản lý căn hộ"
-                        android:textColor="@color/text_primary"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="Thêm, sửa, xóa căn hộ"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
-                </LinearLayout>
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@android:drawable/ic_menu_more"
-                    android:tint="@color/text_secondary" />
-            </LinearLayout>
-
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="16dp"
+                android:text="Quản lý căn hộ"
+                android:textColor="@color/text_primary"
+                android:textStyle="bold" />
         </androidx.cardview.widget.CardView>
 
-        <!-- Manage Users Card -->
         <androidx.cardview.widget.CardView
             android:id="@+id/cardManageUsers"
             android:layout_width="match_parent"
-            android:layout_height="70dp"
+            android:layout_height="60dp"
             android:layout_marginBottom="8dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?attr/selectableItemBackground"
             app:cardBackgroundColor="@color/bg_card"
             app:cardCornerRadius="12dp"
             app:cardElevation="0dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="16dp">
-
-                <LinearLayout
-                    android:layout_width="44dp"
-                    android:layout_height="44dp"
-                    android:background="@drawable/bg_circle"
-                    android:gravity="center">
-
-                    <ImageView
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
-                        android:src="@android:drawable/ic_menu_myplaces"
-                        android:tint="#C084FC" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Quản lý người dùng"
-                        android:textColor="@color/text_primary"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="Xem, sửa, xóa tài khoản"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
-                </LinearLayout>
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@android:drawable/ic_menu_more"
-                    android:tint="@color/text_secondary" />
-            </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="16dp"
+                android:text="Quản lý người dùng"
+                android:textColor="@color/text_primary"
+                android:textStyle="bold" />
         </androidx.cardview.widget.CardView>
     </LinearLayout>
 
-    <!-- Spacer -->
     <View
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <!-- Button: Xem giao diện khách -->
     <Button
         android:id="@+id/btnExitToMain"
         android:layout_width="match_parent"
@@ -439,10 +303,8 @@
         android:backgroundTint="@color/btn_secondary"
         android:text="Xem giao diện khách"
         android:textColor="@color/text_primary"
-        android:textSize="14sp"
         app:cornerRadius="12dp" />
 
-    <!-- Logout Button -->
     <Button
         android:id="@+id/btnLogout"
         android:layout_width="match_parent"
@@ -452,7 +314,6 @@
         android:backgroundTint="@color/btn_secondary"
         android:text="Đăng xuất"
         android:textColor="@color/text_secondary"
-        android:textSize="14sp"
         app:cornerRadius="12dp" />
 
 </LinearLayout>

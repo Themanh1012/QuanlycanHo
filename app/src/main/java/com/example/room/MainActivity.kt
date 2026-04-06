@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         try {
-            // Kiểm tra đăng nhập
+
             val sharedPref = getSharedPreferences("UserPrefs", MODE_PRIVATE)
             val isLoggedIn = sharedPref.getBoolean("IS_LOGGED_IN", false)
 

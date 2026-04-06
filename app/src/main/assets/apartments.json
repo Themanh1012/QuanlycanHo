@@ -1,0 +1,24 @@
+[
+  {
+    "title": "Can ho quan 12",
+    "price": 5000000,
+    "address": "San quan doi 12",
+    "description": "Can ho nam sat khu quan doi ke ben San bong da",
+    "area": 13,
+    "imagePath": "batdongsan",
+    "status": "Còn trống",
+    "id_user": 1,
+    "badge": "GIẢM GIÁ HOT"
+  },
+  {
+    "title": "Can ho gia re",
+    "price": 19000000,
+    "address": "1465\/44\/10",
+    "description": "JFkak",
+    "area": 200234,
+    "imagePath": "canho01",
+    "status": "Còn trống",
+    "id_user": 1,
+    "badge": ""
+  }
+]

@@ -49,10 +49,7 @@ class AddEditUserActivity : AppCompatActivity() {
     private fun checkEditMode() {
         userId = intent.getIntExtra("USER_ID", -1)
         if (userId != -1) {
-            title = "Chỉnh sửa người dùng"
             loadUserData()
-        } else {
-            title = "Thêm người dùng mới"
         }
     }
 
@@ -67,10 +64,7 @@ class AddEditUserActivity : AppCompatActivity() {
 
     private fun setupListeners() {
         ivBack.setOnClickListener { finish() }
-
-        btnSave.setOnClickListener {
-            saveUser()
-        }
+        btnSave.setOnClickListener { saveUser() }
     }
 
     private fun saveUser() {
@@ -84,7 +78,6 @@ class AddEditUserActivity : AppCompatActivity() {
         }
 
         val success = if (userId == -1) {
-
             val newUser = User(
                 id = 0,
                 username = username,

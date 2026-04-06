@@ -29,22 +29,52 @@ class ProfileFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_profile, container, false)
 
-        // Ánh xạ views
         tvUserName = view.findViewById(R.id.tvUserName)
         tvUserRole = view.findViewById(R.id.tvUserRole)
         cardAdminPanel = view.findViewById(R.id.cardAdminPanel)
         btnAdminDashboard = view.findViewById(R.id.btnAdminDashboard)
 
-        // Lấy thông tin user từ SharedPreferences
+        updateUserInfo()
+
+        btnAdminDashboard.setOnClickListener {
+            val intent = Intent(requireActivity(), AdminDashboardActivity::class.java)
+            startActivity(intent)
+        }
+
+        val btnLogout = view.findViewById<Button>(R.id.btnLogoutFromProfile)
+        btnLogout.setOnClickListener {
+            val sharedPref = requireActivity().getSharedPreferences("UserPrefs", android.content.Context.MODE_PRIVATE)
+            sharedPref.edit().clear().apply()
+
+            val intent = Intent(requireActivity(), LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            requireActivity().finish()
+        }
+
+        view.findViewById<View>(R.id.btnEditProfile)?.setOnClickListener {
+            startActivity(Intent(requireActivity(), EditProfileActivity::class.java))
+        }
+
+        view.findViewById<View>(R.id.btnHistory)?.setOnClickListener {
+            startActivity(Intent(requireActivity(), HistoryActivity::class.java))
+        }
+
+        view.findViewById<View>(R.id.btnSettings)?.setOnClickListener {
+            startActivity(Intent(requireActivity(), SettingsActivity::class.java))
+        }
+
+        return view
+    }
+
+    private fun updateUserInfo() {
         val sharedPref = requireActivity().getSharedPreferences("UserPrefs", android.content.Context.MODE_PRIVATE)
         val isLoggedIn = sharedPref.getBoolean("IS_LOGGED_IN", false)
-        val userName = sharedPref.getString("fullName", "Khách hàng")  // SỬA: fullName thay vì FULL_NAME
-        val role = sharedPref.getInt("role", 0)  // SỬA: role thay vì ROLE
+        val fullName = sharedPref.getString("fullName", "Khách hàng")
+        val role = sharedPref.getInt("role", 0)
 
-        // Hiển thị thông tin user
-        tvUserName.text = userName
+        tvUserName.text = fullName
 
-        // Kiểm tra nếu là Admin
         if (isLoggedIn && role == 1) {
             tvUserRole.text = "Quản trị viên"
             cardAdminPanel.visibility = View.VISIBLE
@@ -52,51 +82,10 @@ class ProfileFragment : Fragment() {
             tvUserRole.text = "Khách hàng"
             cardAdminPanel.visibility = View.GONE
         }
-
-        // Nút Admin Dashboard
-        btnAdminDashboard.setOnClickListener {
-            val intent = Intent(requireActivity(), AdminDashboardActivity::class.java)
-            startActivity(intent)
-        }
-
-        // Nút Đăng xuất
-        val btnLogout = view.findViewById<Button>(R.id.btnLogoutFromProfile)
-        btnLogout.setOnClickListener {
-            // Xóa session
-            sharedPref.edit().clear().apply()
-
-            // Chuyển về LoginActivity
-            val intent = Intent(requireActivity(), LoginActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
-            requireActivity().finish()
-        }
-
-        val btnEdit = view.findViewById<View>(R.id.btnEditProfile)
-        btnEdit?.setOnClickListener {
-            val intent = Intent(requireActivity(), EditProfileActivity::class.java)
-            startActivity(intent)
-        }
-
-        val btnHistory = view.findViewById<View>(R.id.btnHistory)
-        btnHistory?.setOnClickListener {
-            startActivity(Intent(requireActivity(), HistoryActivity::class.java))
-        }
-
-        val btnSettings = view.findViewById<View>(R.id.btnSettings)
-        btnSettings?.setOnClickListener {
-            startActivity(Intent(requireActivity(), SettingsActivity::class.java))
-        }
-
-        return view
     }
+
     override fun onResume() {
         super.onResume()
-
-        val sharedPref = requireActivity().getSharedPreferences("UserPrefs", android.content.Context.MODE_PRIVATE)
-        val userName = sharedPref.getString("FULL_NAME", "Khách hàng")
-
-        tvUserName.text = userName
+        updateUserInfo()
     }
-
 }
