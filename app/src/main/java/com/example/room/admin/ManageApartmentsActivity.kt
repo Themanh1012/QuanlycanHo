@@ -4,6 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.View
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
@@ -25,6 +27,7 @@ class ManageApartmentsActivity : AppCompatActivity() {
     private lateinit var adapter: ApartmentAdapter
     private lateinit var edtSearch: EditText
     private lateinit var ivBack: ImageView
+    private lateinit var btnExit: Button
     private var apartmentList = ArrayList<Apartment>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,15 +37,17 @@ class ManageApartmentsActivity : AppCompatActivity() {
         dbHelper = DatabaseHelper(this)
 
         initViews()
-        loadData()
         setupListeners()
+        loadData()
     }
 
     private fun initViews() {
         recyclerView = findViewById(R.id.rvApartments)
         edtSearch = findViewById(R.id.etSearchApartment)
         ivBack = findViewById(R.id.ivBack)
+        btnExit = findViewById(R.id.btnExit)
 
+        // Khởi tạo adapter với danh sách rỗng trước
         adapter = ApartmentAdapter(
             apartmentList,
             onItemClick = { apartment ->
@@ -66,15 +71,21 @@ class ManageApartmentsActivity : AppCompatActivity() {
     }
 
     private fun loadData() {
+        val data = dbHelper.getAllApartments()
         apartmentList.clear()
-        apartmentList.addAll(dbHelper.getAllApartments())
+        apartmentList.addAll(data)
         adapter.updateList(apartmentList)
+        
+        // Hiển thị thông báo nếu danh sách rỗng để người dùng biết
+        if (apartmentList.isEmpty()) {
+            Toast.makeText(this, "Chưa có căn hộ nào. Hãy nhấn (+) để thêm!", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun setupListeners() {
         ivBack.setOnClickListener { finish() }
+        btnExit.setOnClickListener { finish() }
 
-        // Xử lý nút thêm mới (+)
         findViewById<FloatingActionButton>(R.id.fabAddApartment).setOnClickListener {
             val intent = Intent(this, AddEditApartmentActivity::class.java)
             intent.putExtra("mode", "add")
@@ -99,7 +110,7 @@ class ManageApartmentsActivity : AppCompatActivity() {
                 it.address.contains(query, ignoreCase = true)
             }
         }
-        adapter.updateList(filtered)
+        adapter.updateList(ArrayList(filtered))
     }
 
     private fun showDeleteConfirmDialog(apartment: Apartment) {
@@ -120,6 +131,6 @@ class ManageApartmentsActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        loadData()
+        loadData() // Quan trọng: Luôn nạp lại dữ liệu khi quay về từ màn hình thêm/sửa
     }
 }

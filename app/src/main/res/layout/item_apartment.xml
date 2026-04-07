@@ -17,15 +17,14 @@
         <!-- Image with Status Badge -->
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="140dp">
+            android:layout_height="180dp">
 
             <ImageView
                 android:id="@+id/imgApartment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/divider_color"
                 android:scaleType="centerCrop"
-                android:src="@android:drawable/ic_dialog_map" />
+                android:src="@drawable/canho01" />
 
             <!-- Status Badge -->
             <TextView
@@ -33,13 +32,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="top|end"
-                android:layout_margin="8dp"
+                android:layout_margin="12dp"
                 android:background="@drawable/bg_status_available"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="4dp"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="6dp"
                 android:text="Còn trống"
                 android:textColor="@android:color/white"
-                android:textSize="11sp"
+                android:textSize="12sp"
                 android:textStyle="bold" />
         </FrameLayout>
 
@@ -48,84 +47,99 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="12dp">
+            android:padding="16dp">
 
             <TextView
                 android:id="@+id/tvTitle"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="Căn hộ 1"
+                android:text="Căn hộ mẫu"
                 android:textColor="@color/text_primary"
-                android:textSize="16sp"
+                android:textSize="18sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tvAddress"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="4dp"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="Quận 4, TP.HCM"
+                android:text="Địa chỉ căn hộ"
                 android:textColor="@color/text_secondary"
-                android:textSize="12sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/tvPrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:text="5.000.000 VND/tháng"
-                android:textColor="@color/colorAccent"
-                android:textSize="15sp"
+                android:layout_marginTop="8dp"
+                android:text="0 VND/tháng"
+                android:textColor="#2563EB"
+                android:textSize="16sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tvArea"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:text="Diện tích: 34 m²"
+                android:layout_marginTop="4dp"
+                android:text="Diện tích: 0 m²"
                 android:textColor="@color/text_secondary"
-                android:textSize="12sp" />
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tvRenterName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:padding="8dp"
+                android:background="#FEF3C7"
+                android:text="Người thuê: ..."
+                android:textColor="#92400E"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
 
             <!-- Actions Row -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="16dp"
+                android:gravity="center_vertical"
                 android:orientation="horizontal">
 
                 <Button
                     android:id="@+id/btnDetail"
                     android:layout_width="0dp"
-                    android:layout_height="38dp"
+                    android:layout_height="45dp"
                     android:layout_weight="1"
-                    android:backgroundTint="@color/btn_primary"
+                    android:backgroundTint="#3B82F6"
                     android:text="Chi tiết"
+                    android:textAllCaps="false"
                     android:textColor="@android:color/white"
-                    android:textSize="13sp"
+                    android:textSize="14sp"
                     app:cornerRadius="8dp" />
 
                 <ImageView
                     android:id="@+id/btnEdit"
-                    android:layout_width="38dp"
-                    android:layout_height="38dp"
-                    android:layout_marginStart="8dp"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:layout_marginStart="12dp"
                     android:background="@drawable/bg_icon_button"
-                    android:padding="10dp"
+                    android:padding="12dp"
                     android:src="@android:drawable/ic_menu_edit"
                     app:tint="@color/text_primary" />
 
                 <ImageView
                     android:id="@+id/btnDelete"
-                    android:layout_width="38dp"
-                    android:layout_height="38dp"
-                    android:layout_marginStart="8dp"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:layout_marginStart="12dp"
                     android:background="@drawable/bg_icon_button_red"
-                    android:padding="10dp"
+                    android:padding="12dp"
                     android:src="@android:drawable/ic_menu_delete"
                     app:tint="@android:color/white" />
             </LinearLayout>
