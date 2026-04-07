@@ -1,24 +1,26 @@
 [
   {
-    "title": "Can ho quan 12",
-    "price": 5000000,
-    "address": "San quan doi 12",
-    "description": "Can ho nam sat khu quan doi ke ben San bong da",
-    "area": 13,
-    "imagePath": "batdongsan",
-    "status": "Còn trống",
+    "title": "test",
+    "price": 9999999999999,
+    "address": "tesst",
+    "description": "tesst",
+    "area": 99999999999,
+    "imagePaths": "canho01",
+    "status": "Đã thuê",
     "id_user": 1,
-    "badge": "GIẢM GIÁ HOT"
+    "id_renter": 3,
+    "badge": "VIP KIM CƯƠNG"
   },
   {
-    "title": "Can ho gia re",
-    "price": 19000000,
-    "address": "1465\/44\/10",
-    "description": "JFkak",
-    "area": 200234,
-    "imagePath": "canho01",
-    "status": "Còn trống",
+    "title": "1 PN + 1, Tòa S10.03, khu The Origami, Vinhomes Grand Park",
+    "price": 2830000,
+    "address": "Phường Long Thạnh Mỹ, Thủ Đức, Thành phố Hồ Chí Minh",
+    "description": "Cư dân có thể sử dụng hàng loạt các tiện ích dịch vụ có sẵn: Khu vui chơi giải trí, Công viên gym thể thao ngoài trời, Đài phun nước, Vườn Nhật, Hồ điều hòa, Công viên Nhật Bản, Sân tập thể thao, Bể bơi, Khu tập dưỡng sinh, Yoga…",
+    "area": 43.1,
+    "imagePaths": "canho01,thaodien,batdongsan",
+    "status": "Đã thuê",
     "id_user": 1,
-    "badge": ""
+    "id_renter": 3,
+    "badge": "HẠNG BẠC"
   }
 ]

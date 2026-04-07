@@ -57,25 +57,27 @@
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardImageUpload"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="wrap_content"
+                android:minHeight="200dp"
                 app:cardBackgroundColor="@color/bg_card"
                 app:cardCornerRadius="12dp">
 
-                <FrameLayout
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
-                    <ImageView
-                        android:id="@+id/imgApartment"
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvImages"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="centerCrop"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
                         android:visibility="gone" />
 
                     <LinearLayout
                         android:id="@+id/layoutPlaceholder"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="200dp"
                         android:gravity="center"
                         android:orientation="vertical">
 
@@ -89,11 +91,11 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:text="Nhấn để chọn ảnh"
+                            android:text="Nhấn để chọn nhiều ảnh"
                             android:textColor="@color/text_secondary"
                             android:textSize="16sp" />
                     </LinearLayout>
-                </FrameLayout>
+                </LinearLayout>
             </androidx.cardview.widget.CardView>
 
             <TextView
@@ -103,10 +105,9 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="8dp"
                 android:padding="8dp"
-                android:text="Đổi ảnh"
+                android:text="Thêm ảnh"
                 android:textColor="@color/colorPrimary"
-                android:textSize="14sp"
-                android:visibility="gone" />
+                android:textSize="14sp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -119,13 +120,12 @@
             <EditText
                 android:id="@+id/edtTitle"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
+                android:minHeight="50dp"
                 android:layout_marginTop="4dp"
-                android:background="@color/bg_card"
                 android:hint="Nhập tiêu đề căn hộ"
-                android:inputType="textCapSentences"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
+                android:inputType="text"
+                android:padding="12dp"
                 android:textColor="@color/text_primary" />
 
             <TextView
@@ -141,11 +141,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginTop="4dp"
-                android:background="@color/bg_card"
                 android:hint="Nhập giá thuê"
                 android:inputType="number"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
+                android:padding="12dp"
                 android:textColor="@color/text_primary" />
 
             <TextView
@@ -159,13 +157,12 @@
             <EditText
                 android:id="@+id/edtAddress"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
+                android:minHeight="50dp"
                 android:layout_marginTop="4dp"
-                android:background="@color/bg_card"
                 android:hint="Nhập địa chỉ"
-                android:inputType="textCapSentences"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
+                android:inputType="text"
+                android:padding="12dp"
                 android:textColor="@color/text_primary" />
 
             <TextView
@@ -181,11 +178,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginTop="4dp"
-                android:background="@color/bg_card"
                 android:hint="Nhập diện tích"
                 android:inputType="numberDecimal"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
+                android:padding="12dp"
                 android:textColor="@color/text_primary" />
 
             <TextView
@@ -199,13 +194,13 @@
             <EditText
                 android:id="@+id/edtDescription"
                 android:layout_width="match_parent"
-                android:layout_height="120dp"
+                android:layout_height="wrap_content"
+                android:minHeight="120dp"
                 android:layout_marginTop="4dp"
-                android:background="@color/bg_card"
                 android:gravity="top"
                 android:hint="Nhập mô tả căn hộ"
-                android:inputType="textMultiLine|textCapSentences"
-                android:padding="16dp"
+                android:inputType="textMultiLine"
+                android:padding="12dp"
                 android:textColor="@color/text_primary" />
 
             <Button
