@@ -1,12 +1,13 @@
 package com.example.room.listing
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.room.R
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.room.adapter.ApartmentUserAdapter
+import com.example.room.adapter.ApartmentVerticalAdapter
 import com.example.room.database.DatabaseHelper
 import com.example.room.model.Apartment
 
@@ -14,7 +15,7 @@ class ApartmentListActivity : AppCompatActivity() {
 
     private lateinit var dbHelper: DatabaseHelper
     private lateinit var recyclerView: RecyclerView
-    private lateinit var adapter: ApartmentUserAdapter
+    private lateinit var adapter: ApartmentVerticalAdapter // Đổi ở đây
     private var list = ArrayList<Apartment>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,8 +27,11 @@ class ApartmentListActivity : AppCompatActivity() {
 
         loadData()
 
-        adapter = ApartmentUserAdapter(list) { apartment ->
-
+        // Và đổi ở đây
+        adapter = ApartmentVerticalAdapter(list) { apartment ->
+            val intent = Intent(this, ApartmentDetailActivity::class.java)
+            intent.putExtra("apartment_id", apartment.id)
+            startActivity(intent)
         }
 
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -40,6 +44,6 @@ class ApartmentListActivity : AppCompatActivity() {
 
     private fun loadData() {
         list.clear()
-        list.addAll(dbHelper.getAllApartments()) // 🔥 CHÍNH LÀ DÒNG NỐI ADMIN → USER
+        list.addAll(dbHelper.getAllApartments())
     }
 }

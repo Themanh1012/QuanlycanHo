@@ -5,28 +5,40 @@
     android:background="@color/bg_main"
     android:orientation="vertical">
 
-    <!-- Header -->
+    <!-- Header Hiện đại -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/bg_card"
-        android:elevation="4dp"
-        android:padding="16dp">
+        android:orientation="vertical"
+        android:paddingHorizontal="24dp"
+        android:paddingTop="32dp"
+        android:paddingBottom="16dp">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Căn hộ đã lưu"
-            android:textAlignment="center"
             android:textColor="@color/text_primary"
-            android:textSize="20sp"
+            android:textSize="28sp"
             android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Những không gian bạn yêu thích"
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp" />
     </LinearLayout>
 
-    <!-- RecyclerView -->
+    <!-- Danh sách -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvSaved"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="16dp"/>
+        android:clipToPadding="false"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="32dp" />
+
 </LinearLayout>
