@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="280dp"
+    android:layout_width="match_parent"
     android:layout_height="320dp"
-    android:layout_marginEnd="16dp"
-    android:layout_marginBottom="16dp"
+    android:layout_marginBottom="24dp"
     app:cardBackgroundColor="@color/bg_card"
     app:cardCornerRadius="24dp"
     app:cardElevation="2dp">
 
-    <!-- ConstraintLayout giúp đè các thành phần lên nhau dễ hơn -->
+    <!-- ConstraintLayout để đè các lớp (ảnh, gradient, text) lên nhau -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -26,7 +25,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- 2. LỚP PHỦ MỜ (Gradient) Ở DƯỚI ĐỂ ĐỌC CHỮ DỄ HƠN -->
+        <!-- 2. LỚP PHỦ MỜ (Gradient) Ở DƯỚI -->
         <View
             android:layout_width="match_parent"
             android:layout_height="140dp"
@@ -35,7 +34,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <!-- 3. BADGE: Nằm góc trên bên trái -->
+        <!-- 3. BADGE: VIP / Mới (Góc trên trái) -->
         <TextView
             android:id="@+id/tvBadge"
             android:layout_width="wrap_content"
@@ -53,7 +52,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- 4. TRÁI TIM YÊU THÍCH (Góc trên phải - giả lập icon theo UI mẫu) -->
+        <!-- 4. ICON YÊU THÍCH (Góc trên phải) -->
         <androidx.cardview.widget.CardView
             android:layout_width="32dp"
             android:layout_height="32dp"
@@ -73,17 +72,17 @@
                 app:tint="#FFFFFF" />
         </androidx.cardview.widget.CardView>
 
-        <!-- 5. KHU VỰC THÔNG TIN (Nằm đè ở Bottom của ảnh) -->
+        <!-- 5. KHU VỰC THÔNG TIN (Sát đáy thẻ) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp"
+            android:padding="20dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
-            <!-- Địa chỉ với Icon Location -->
+            <!-- Địa chỉ -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -100,70 +99,68 @@
                     android:id="@+id/tvAddress"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
+                    android:layout_marginStart="6dp"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:text="Boston, NY"
+                    android:text="Quận 4, TP.HCM"
                     android:textColor="#E5E7EB"
-                    android:textSize="12sp" />
+                    android:textSize="13sp" />
             </LinearLayout>
 
-            <!-- Tiêu đề Căn hộ -->
+            <!-- Tiêu đề -->
             <TextView
                 android:id="@+id/tvTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="6dp"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="11 Green Bank"
+                android:text="Luxury Apartment"
                 android:textColor="#FFFFFF"
-                android:textSize="18sp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
-            <!-- Row Dưới: Giá và Trạng thái -->
+            <!-- Giá tiền và Trạng thái -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="10dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
-                <!-- Giá -->
                 <TextView
                     android:id="@+id/tvPrice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="$14.5k"
+                    android:text="14.500.000"
                     android:textColor="#FFFFFF"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="2dp"
-                    android:text="/m"
+                    android:layout_marginStart="4dp"
+                    android:text="VND/tháng"
                     android:textColor="#9CA3AF"
-                    android:textSize="12sp" />
+                    android:textSize="13sp" />
 
                 <View
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:layout_weight="1" />
 
-                <!-- Trạng thái/Review (Như trong thiết kế có điểm review, tôi thay bằng Text Status của dự án hiện tại) -->
                 <TextView
                     android:id="@+id/tvStatus"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_status_available"
                     android:backgroundTint="#4D000000"
-                    android:paddingHorizontal="8dp"
-                    android:paddingVertical="4dp"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="6dp"
                     android:text="Còn trống"
                     android:textColor="#FFFFFF"
-                    android:textSize="10sp"
+                    android:textSize="11sp"
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>

@@ -7,14 +7,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.room.R
-import com.example.room.adapter.ApartmentUserAdapter
+import com.example.room.adapter.ApartmentVerticalAdapter
 import com.example.room.database.DatabaseHelper
 import com.example.room.listing.ApartmentDetailActivity
 
 class HistoryActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
-    private lateinit var adapter: ApartmentUserAdapter
+    private lateinit var adapter: ApartmentVerticalAdapter
     private lateinit var dbHelper: DatabaseHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,7 +36,7 @@ class HistoryActivity : AppCompatActivity() {
 
         val list = dbHelper.getViewHistory(userId)
 
-        adapter = ApartmentUserAdapter(list) { apartment ->
+        adapter = ApartmentVerticalAdapter(list) { apartment ->
             val intent = Intent(this, ApartmentDetailActivity::class.java)
             intent.putExtra("apartment_id", apartment.id)
             startActivity(intent)
@@ -54,7 +54,7 @@ class HistoryActivity : AppCompatActivity() {
         val userId = sharedPref.getInt("userId", 0)
 
         val list = dbHelper.getViewHistory(userId)
-        adapter = ApartmentUserAdapter(list) { apartment ->
+        adapter = ApartmentVerticalAdapter(list) { apartment ->
             val intent = Intent(this, ApartmentDetailActivity::class.java)
             intent.putExtra("apartment_id", apartment.id)
             startActivity(intent)
