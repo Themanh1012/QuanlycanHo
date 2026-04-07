@@ -7,10 +7,12 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.*
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
@@ -46,9 +48,11 @@ class AddEditApartmentActivity : AppCompatActivity() {
     private lateinit var rvImages: RecyclerView
     private lateinit var imageAdapter: ImageSelectedAdapter
 
-    companion object {
-        private const val PICK_IMAGE_REQUEST = 1001
-        private const val PERMISSION_REQUEST_CODE = 1002
+    // Launcher mới để chọn ảnh từ Gallery
+    private val galleryLauncher = registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
+        uris?.forEach { uri ->
+            saveImageFromUri(uri)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,7 +81,6 @@ class AddEditApartmentActivity : AppCompatActivity() {
         btnSave = findViewById(R.id.btnSave)
         rvImages = findViewById(R.id.rvImages)
         
-        // Setup Spinner cho Badge
         spinnerBadge = Spinner(this)
         val layout = findViewById<LinearLayout>(R.id.layoutContainer)
         val tvLabel = TextView(this).apply {
@@ -85,7 +88,6 @@ class AddEditApartmentActivity : AppCompatActivity() {
             textSize = 14f
             setPadding(0, 32, 0, 8)
         }
-        // Thêm vào phía trên Mô tả
         val index = layout.indexOfChild(findViewById(R.id.edtDescription)) - 1
         layout.addView(tvLabel, index)
         layout.addView(spinnerBadge, index + 1)
@@ -164,9 +166,9 @@ class AddEditApartmentActivity : AppCompatActivity() {
     }
 
     private fun showImageSourceDialog() {
-        val options = arrayOf("Chọn từ Gallery", "Chọn từ Camera", "Ảnh mẫu từ App")
+        val options = arrayOf("Chọn từ Gallery (Bộ sưu tập)", "Chọn từ Camera", "Ảnh mẫu từ App")
         AlertDialog.Builder(this)
-            .setTitle("Chọn ảnh")
+            .setTitle("Chọn phương thức")
             .setItems(options) { _, which ->
                 when (which) {
                     0 -> checkPermissionAndOpenGallery()
@@ -178,22 +180,17 @@ class AddEditApartmentActivity : AppCompatActivity() {
     }
 
     private fun checkPermissionAndOpenGallery() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_MEDIA_IMAGES), PERMISSION_REQUEST_CODE)
-            } else { openGallery() }
+        val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            Manifest.permission.READ_MEDIA_IMAGES
         } else {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), PERMISSION_REQUEST_CODE)
-            } else { openGallery() }
+            Manifest.permission.READ_EXTERNAL_STORAGE
         }
-    }
 
-    private fun openGallery() {
-        val intent = Intent(Intent.ACTION_PICK)
-        intent.type = "image/*"
-        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-        startActivityForResult(intent, PICK_IMAGE_REQUEST)
+        if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(permission), 1001)
+        } else {
+            galleryLauncher.launch("image/*")
+        }
     }
 
     private fun openCamera() {
@@ -206,7 +203,10 @@ class AddEditApartmentActivity : AppCompatActivity() {
     }
 
     private fun showDrawableImages() {
-        val drawableNames = arrayOf("canho01", "canho02", "canho03", "batdongsan", "landmark", "thaodien", "vinhomes", "bietthu", "chungcu", "studio")
+        val drawableNames = arrayOf(
+            "canho01", "canho02", "canho03", "batdongsan", "landmark", 
+            "thaodien", "vinhomes", "bietthu", "chungcu", "studio"
+        )
         val existingDrawables = drawableNames.filter { name ->
             resources.getIdentifier(name, "drawable", packageName) != 0
         }.toTypedArray()
@@ -223,46 +223,38 @@ class AddEditApartmentActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK) {
-            when (requestCode) {
-                PICK_IMAGE_REQUEST -> {
-                    if (data?.clipData != null) {
-                        val count = data.clipData!!.itemCount
-                        for (i in 0 until count) {
-                            saveImageFromUri(data.clipData!!.getItemAt(i).uri)
-                        }
-                    } else if (data?.data != null) {
-                        saveImageFromUri(data.data!!)
-                    }
-                }
-                2003 -> {
-                    (data?.extras?.get("data") as? Bitmap)?.let { saveBitmapToStorage(it) }
-                }
-            }
+        if (resultCode == Activity.RESULT_OK && requestCode == 2003) {
+            (data?.extras?.get("data") as? Bitmap)?.let { saveBitmapToStorage(it) }
         }
     }
 
-    private fun saveImageFromUri(uri: android.net.Uri) {
+    private fun saveImageFromUri(uri: Uri) {
         try {
             val inputStream = contentResolver.openInputStream(uri)
             inputStream?.use { stream ->
                 val imageDir = File(filesDir, "apartment_images")
                 if (!imageDir.exists()) imageDir.mkdirs()
+                
                 val fileName = "img_${System.currentTimeMillis()}_${(1..1000).random()}.jpg"
                 val imageFile = File(imageDir, fileName)
+                
                 FileOutputStream(imageFile).use { output ->
-                    val buffer = ByteArray(1024)
+                    val buffer = ByteArray(4096)
                     var length: Int
                     while (stream.read(buffer).also { length = it } > 0) {
                         output.write(buffer, 0, length)
                     }
                 }
+                
                 selectedImages.add(imageFile.absolutePath)
-                imageAdapter.notifyDataSetChanged()
-                updateImageVisibility()
+                runOnUiThread {
+                    imageAdapter.notifyDataSetChanged()
+                    updateImageVisibility()
+                }
             }
         } catch (e: Exception) {
             e.printStackTrace()
+            Toast.makeText(this, "Lỗi khi lưu ảnh!", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -291,18 +283,15 @@ class AddEditApartmentActivity : AppCompatActivity() {
         val areaStr = edtArea.text.toString().trim()
         val badge = if (spinnerBadge.selectedItemPosition <= 0) "" else spinnerBadge.selectedItem.toString()
 
-        if (title.isEmpty()) { Toast.makeText(this, "Vui lòng nhập tiêu đề!", Toast.LENGTH_SHORT).show(); return }
-        if (priceStr.isEmpty()) { Toast.makeText(this, "Vui lòng nhập giá thuê!", Toast.LENGTH_SHORT).show(); return }
-        if (address.isEmpty()) { Toast.makeText(this, "Vui lòng nhập địa chỉ!", Toast.LENGTH_SHORT).show(); return }
+        if (title.isEmpty() || priceStr.isEmpty() || address.isEmpty()) {
+            Toast.makeText(this, "Vui lòng nhập đủ thông tin bắt buộc!", Toast.LENGTH_SHORT).show()
+            return
+        }
 
         val price = priceStr.toDoubleOrNull() ?: 0.0
         val area = areaStr.toDoubleOrNull() ?: 0.0
-        
-        if (price <= 0) { Toast.makeText(this, "Giá thuê phải lớn hơn 0!", Toast.LENGTH_SHORT).show(); return }
-
-        // Lấy userId từ SharedPreferences để biết ai là người đăng bài
         val sharedPref = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
-        val currentUserId = sharedPref.getInt("userId", 1) // Mặc định là 1 nếu không tìm thấy
+        val currentUserId = sharedPref.getInt("userId", 1)
 
         val apartment = Apartment(
             id = apartmentId,
@@ -320,10 +309,10 @@ class AddEditApartmentActivity : AppCompatActivity() {
         val result = if (isEditMode) dbHelper.updateApartment(apartment) else dbHelper.insertApartment(apartment).toInt()
 
         if (result > 0) {
-            Toast.makeText(this, if (isEditMode) "Cập nhật thành công!" else "Thêm căn hộ thành công!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Thành công!", Toast.LENGTH_SHORT).show()
             finish()
         } else {
-            Toast.makeText(this, "Thất bại, vui lòng kiểm tra lại!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Thất bại!", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -331,12 +320,11 @@ class AddEditApartmentActivity : AppCompatActivity() {
         AlertDialog.Builder(this)
             .setTitle("Xác nhận xóa")
             .setMessage("Bạn có chắc muốn xóa căn hộ này?")
-            .setPositiveButton("Xóa") { dialog, _ ->
+            .setPositiveButton("Xóa") { _, _ ->
                 if (dbHelper.deleteApartment(apartmentId) > 0) {
-                    Toast.makeText(this, "Đã xóa thành công", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Đã xóa!", Toast.LENGTH_SHORT).show()
                     finish()
                 }
-                dialog.dismiss()
             }
             .setNegativeButton("Hủy", null)
             .show()
