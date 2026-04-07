@@ -5,12 +5,13 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import com.example.room.R
-import android.widget.ImageView
 import android.widget.TextView
 import com.example.room.database.DatabaseHelper
 import java.text.DecimalFormat
 import android.widget.Button
 import android.widget.Toast
+import androidx.viewpager2.widget.ViewPager2
+import com.example.room.adapter.ImageSliderAdapter
 
 class ApartmentDetailActivity : AppCompatActivity() {
 
@@ -23,7 +24,6 @@ class ApartmentDetailActivity : AppCompatActivity() {
 
         dbHelper = DatabaseHelper(this)
 
-        // Lấy userId từ SharedPreferences
         val sharedPref = getSharedPreferences("UserPrefs", MODE_PRIVATE)
         val userId = sharedPref.getInt("userId", 0)
 
@@ -38,9 +38,10 @@ class ApartmentDetailActivity : AppCompatActivity() {
             return
         }
 
-        val apartment = dbHelper.getApartmentById(apartmentId)
+        var apartment = dbHelper.getApartmentById(apartmentId)
 
-        if (apartment == null) {
+        val initialApartment = apartment
+        if (initialApartment == null) {
             Toast.makeText(this, "Không tìm thấy dữ liệu!", Toast.LENGTH_SHORT).show()
             finish()
             return
@@ -53,35 +54,40 @@ class ApartmentDetailActivity : AppCompatActivity() {
         val tvArea = findViewById<TextView>(R.id.tvArea)
         val tvStatus = findViewById<TextView>(R.id.tvStatus)
         val tvDescription = findViewById<TextView>(R.id.tvDescription)
-        val imgApartment = findViewById<ImageView>(R.id.imgApartment)
         val btnSave = findViewById<Button>(R.id.btnSave)
         val btnRent = findViewById<Button>(R.id.btnRent)
+        val viewPagerImage = findViewById<ViewPager2>(R.id.viewPagerImage)
+        val tvImageCount = findViewById<TextView>(R.id.tvImageCount)
 
         // ====== CHECK STATUS ======
-        if (apartment.status == "Đã thuê") {
-            btnRent.text = "Đã thuê"
-            btnRent.isEnabled = false
-            
-            // Hiển thị thêm thông tin người thuê nếu là Admin (tùy chọn)
-            val renter = apartment.id_renter?.let { dbHelper.getUserById(it) }
-            renter?.let {
-                tvStatus.text = "Đã thuê bởi: ${it.fullName}"
+        fun updateUI() {
+            val current = apartment
+            if (current?.status == "Đã thuê") {
+                btnRent.text = "Đã thuê"
+                btnRent.isEnabled = false
+                val renter = current.id_renter?.let { dbHelper.getUserById(it) }
+                tvStatus.text = if (renter != null) "Đã thuê bởi: ${renter.fullName}" else "Đã thuê"
+            } else {
+                tvStatus.text = current?.status
+                btnRent.text = "Thuê ngay"
+                btnRent.isEnabled = true
             }
         }
+        
+        updateUI()
 
         // ====== BUTTON LƯU ======
         val isSaved = dbHelper.isApartmentSaved(apartmentId, userId)
-        btnSave.text = if (isSaved) "Đã lưu" else "Lưu căn hộ"
+        btnSave.text = if (isSaved) "Đã lưu" else "Yêu thích"
 
         btnSave.setOnClickListener {
             if (userId == 0) {
-                Toast.makeText(this, "Vui lòng đăng nhập để lưu căn hộ", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Vui lòng đăng nhập!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-
             if (dbHelper.isApartmentSaved(apartmentId, userId)) {
                 dbHelper.unsaveApartment(apartmentId, userId)
-                btnSave.text = "Lưu căn hộ"
+                btnSave.text = "Yêu thích"
             } else {
                 dbHelper.saveApartment(apartmentId, userId)
                 btnSave.text = "Đã lưu"
@@ -89,51 +95,44 @@ class ApartmentDetailActivity : AppCompatActivity() {
         }
 
         // ====== SET DATA ======
-        tvTitle.text = apartment.title
-        tvAddress.text = apartment.address
+        tvTitle.text = initialApartment.title
+        tvAddress.text = initialApartment.address
         val formatter = DecimalFormat("#,###")
-        tvPrice.text = formatter.format(apartment.price) + " VND/tháng"
-        tvArea.text = "${apartment.area} m²"
-        if (apartment.status != "Đã thuê") tvStatus.text = apartment.status
-        tvDescription.text = if (apartment.description.isNotEmpty()) apartment.description else "Không có mô tả"
+        tvPrice.text = formatter.format(initialApartment.price) + " VND/tháng"
+        tvArea.text = "${initialApartment.area} m²"
+        tvDescription.text = if (initialApartment.description.isNotEmpty()) initialApartment.description else "Không có mô tả"
 
-        // ====== BUTTON THUÊ ======
+        // ====== BUTTON THUÊ (QUAN TRỌNG) ======
         btnRent.setOnClickListener {
             if (userId == 0) {
                 Toast.makeText(this, "Vui lòng đăng nhập để thuê!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            if (apartment.status == "Đã thuê") {
-                Toast.makeText(this, "Căn hộ đã được thuê!", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            // GỌI HÀM THUÊ MỚI TRONG DATABASE HELPER
+            // GỌI HÀM THUÊ TRỰC TIẾP TRONG DATABASE
             val result = dbHelper.rentApartment(apartmentId, userId)
 
             if (result > 0) {
-                tvStatus.text = "Đã thuê"
-                btnRent.text = "Đã thuê"
-                btnRent.isEnabled = false
+                // Tải lại dữ liệu mới nhất từ DB để cập nhật id_renter
+                apartment = dbHelper.getApartmentById(apartmentId)
+                updateUI()
                 Toast.makeText(this, "Thuê thành công!", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(this, "Lỗi khi thuê, thử lại sau!", Toast.LENGTH_SHORT).show()
             }
         }
 
-        // ====== LOAD IMAGE ======
-        if (apartment.imagePath.isNotEmpty()) {
-            if (!apartment.imagePath.contains("/") && !apartment.imagePath.contains("\\")) {
-                val resId = resources.getIdentifier(apartment.imagePath, "drawable", packageName)
-                if (resId != 0) imgApartment.setImageResource(resId)
-            } else {
-                val file = java.io.File(apartment.imagePath)
-                if (file.exists()) {
-                    val bitmap = android.graphics.BitmapFactory.decodeFile(file.absolutePath)
-                    imgApartment.setImageBitmap(bitmap)
+        // ====== SLIDER IMAGE ======
+        val paths = initialApartment.imagePaths.split(",").filter { it.isNotEmpty() }
+        if (paths.isNotEmpty()) {
+            viewPagerImage.adapter = ImageSliderAdapter(paths)
+            tvImageCount.text = "1/${paths.size}"
+            viewPagerImage.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    super.onPageSelected(position)
+                    tvImageCount.text = "${position + 1}/${paths.size}"
                 }
-            }
+            })
         }
     }
 }

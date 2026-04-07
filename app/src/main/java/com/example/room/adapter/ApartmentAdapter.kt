@@ -1,4 +1,4 @@
-package com.example.room.admin
+package com.example.room.adapter
 
 import android.graphics.BitmapFactory
 import android.view.LayoutInflater
@@ -33,8 +33,7 @@ class ApartmentAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ApartmentViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_apartment, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_apartment, parent, false)
         return ApartmentViewHolder(view)
     }
 
@@ -46,34 +45,34 @@ class ApartmentAdapter(
             holder.tvPrice?.text = formatPrice(apartment.price)
             holder.tvAddress?.text = apartment.address
             holder.tvArea?.text = "Diện tích: ${apartment.area} m²"
-
             holder.tvStatus?.text = apartment.status
+
             if (apartment.status == "Còn trống") {
                 holder.tvStatus?.setBackgroundResource(R.drawable.bg_status_available)
             } else {
                 holder.tvStatus?.setBackgroundResource(R.drawable.bg_status_rented)
             }
 
-            // Hiển thị ảnh
             if (holder.imgApartment != null) {
-                if (apartment.imagePath.isNotEmpty()) {
-                    try {
-                        val imgFile = File(apartment.imagePath)
+                val paths = apartment.imagePaths.split(",")
+                val firstPath = if (paths.isNotEmpty()) paths[0] else ""
+
+                if (firstPath.isNotEmpty()) {
+                    if (!firstPath.contains("/") && !firstPath.contains("\\")) {
+                        val resId = holder.itemView.context.resources.getIdentifier(firstPath, "drawable", holder.itemView.context.packageName)
+                        if (resId != 0) holder.imgApartment.setImageResource(resId)
+                        else holder.imgApartment.setImageResource(R.drawable.canho01)
+                    } else {
+                        val imgFile = File(firstPath)
                         if (imgFile.exists()) {
                             val bitmap = BitmapFactory.decodeFile(imgFile.absolutePath)
-                            if (bitmap != null) {
-                                holder.imgApartment.setImageBitmap(bitmap)
-                            } else {
-                                holder.imgApartment.setImageResource(R.drawable.canho01)
-                            }
+                            if (bitmap != null) holder.imgApartment.setImageBitmap(bitmap)
+                            else holder.imgApartment.setImageResource(R.drawable.canho01)
                         } else {
                             holder.imgApartment.setImageResource(R.drawable.canho01)
                         }
-                    } catch (e: Exception) {
-                        holder.imgApartment.setImageResource(R.drawable.canho01)
                     }
                 } else {
-                    // Hiển thị ảnh mặc định từ drawable
                     holder.imgApartment.setImageResource(R.drawable.canho01)
                 }
             }
@@ -87,6 +86,14 @@ class ApartmentAdapter(
     }
 
     override fun getItemCount(): Int = apartments.size
+
+    fun updateList(newList: List<Apartment>) {
+        if (newList !== apartments) {
+            apartments.clear()
+            apartments.addAll(newList)
+        }
+        notifyDataSetChanged()
+    }
 
     private fun formatPrice(price: Double): String {
         val formatter = DecimalFormat("#,###")

@@ -66,6 +66,11 @@ class AdminDashboardActivity : AppCompatActivity() {
     }
 
     private fun setupClickListeners() {
+        // QUẢN LÝ THUÊ NHÀ (MỚI)
+        findViewById<CardView>(R.id.cardManageRentals).setOnClickListener {
+            startActivity(Intent(this, ManageRentalsActivity::class.java))
+        }
+
         findViewById<CardView>(R.id.cardManageApartments).setOnClickListener {
             startActivity(Intent(this, ManageApartmentsActivity::class.java))
         }
@@ -74,20 +79,8 @@ class AdminDashboardActivity : AppCompatActivity() {
             startActivity(Intent(this, ManageUserActivity::class.java))
         }
 
-        findViewById<Button>(R.id.btnAddApartment).setOnClickListener {
-            val intent = Intent(this, AddEditApartmentActivity::class.java)
-            intent.putExtra("mode", "add")
-            startActivity(intent)
-        }
-
-        findViewById<Button>(R.id.btnViewApartments).setOnClickListener {
-            startActivity(Intent(this, ManageApartmentsActivity::class.java))
-        }
-
         findViewById<Button>(R.id.btnExportJson).setOnClickListener {
             val jsonString = dbHelper.exportApartmentsToJson()
-            
-
             val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clip = ClipData.newPlainText("Apartments JSON", jsonString)
             clipboard.setPrimaryClip(clip)

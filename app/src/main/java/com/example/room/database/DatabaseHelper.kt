@@ -11,27 +11,27 @@ import org.json.JSONObject
 import java.io.InputStream
 import java.nio.charset.Charset
 
-class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, "QuanLyCanHo.db", null, 11) {
+class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, "QuanLyCanHo.db", null, 14) {
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL("""
-            CREATE TABLE users (
+            CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                username TEXT, password TEXT, fullName TEXT, role INTEGER
+                username TEXT UNIQUE, password TEXT, fullName TEXT, role INTEGER
             )
         """.trimIndent())
 
         db.execSQL("""
-            CREATE TABLE apartments (
+            CREATE TABLE IF NOT EXISTS apartments (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 title TEXT, price REAL, address TEXT,
-                description TEXT, area REAL, imagePath TEXT, status TEXT DEFAULT 'Còn trống', 
+                description TEXT, area REAL, imagePaths TEXT, status TEXT DEFAULT 'Còn trống', 
                 id_user INTEGER, id_renter INTEGER DEFAULT NULL, badge TEXT DEFAULT ''
             )
         """.trimIndent())
 
         db.execSQL("""
-            CREATE TABLE view_history (
+            CREATE TABLE IF NOT EXISTS view_history (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 apartment_id INTEGER,
                 user_id INTEGER,
@@ -40,7 +40,7 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, "
         """.trimIndent())
 
         db.execSQL("""
-            CREATE TABLE saved_apartments (
+            CREATE TABLE IF NOT EXISTS saved_apartments (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 apartment_id INTEGER,
                 user_id INTEGER,
@@ -72,6 +72,13 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, "
     }
 
     private fun importApartmentsFromJson(db: SQLiteDatabase) {
+        val countCursor = db.rawQuery("SELECT COUNT(*) FROM apartments", null)
+        countCursor.moveToFirst()
+        val count = countCursor.getInt(0)
+        countCursor.close()
+        
+        if (count > 0) return
+
         try {
             val inputStream: InputStream = context.assets.open("apartments.json")
             val size = inputStream.available()
@@ -89,7 +96,7 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, "
                     put("address", obj.getString("address"))
                     put("description", obj.getString("description"))
                     put("area", obj.getDouble("area"))
-                    put("imagePath", obj.getString("imagePath"))
+                    put("imagePaths", if (obj.has("imagePaths")) obj.getString("imagePaths") else if (obj.has("imagePath")) obj.getString("imagePath") else "")
                     put("status", obj.getString("status"))
                     put("id_user", obj.getInt("id_user"))
                     if (obj.has("id_renter") && !obj.isNull("id_renter")) {
@@ -102,18 +109,11 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, "
                 db.insert("apartments", null, cv)
             }
         } catch (e: Exception) {
-            db.execSQL("INSERT INTO apartments (title, price, address, description, area, imagePath, status, id_user, badge) VALUES ('Căn hộ Sunrise City', 8000000, 'Quận 7, TP.HCM', 'Căn hộ cao cấp...', 65, '', 'Còn trống', 1, 'VIP KIM CƯƠNG')")
+            db.execSQL("INSERT INTO apartments (title, price, address, description, area, imagePaths, status, id_user, badge) VALUES ('Căn hộ Sunrise City', 8000000, 'Quận 7, TP.HCM', 'Căn hộ cao cấp...', 65, 'canho01', 'Còn trống', 1, 'VIP KIM CƯƠNG')")
         }
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        if (oldVersion < 11) {
-            db.execSQL("DROP TABLE IF EXISTS apartments")
-            db.execSQL("DROP TABLE IF EXISTS users")
-            db.execSQL("DROP TABLE IF EXISTS view_history")
-            db.execSQL("DROP TABLE IF EXISTS saved_apartments")
-            onCreate(db)
-        }
     }
 
     fun exportApartmentsToJson(): String {
@@ -126,7 +126,7 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, "
             obj.put("address", item.address)
             obj.put("description", item.description)
             obj.put("area", item.area)
-            obj.put("imagePath", item.imagePath)
+            obj.put("imagePaths", item.imagePaths)
             obj.put("status", item.status)
             obj.put("id_user", item.id_user)
             obj.put("id_renter", item.id_renter)
@@ -141,6 +141,12 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, "
             if (it.moveToFirst()) return User(it.getInt(0), it.getString(1), it.getString(2), it.getString(3), it.getInt(4))
         }
         return null
+    }
+
+    fun isUsernameExists(username: String): Boolean {
+        readableDatabase.rawQuery("SELECT id FROM users WHERE username = ?", arrayOf(username)).use {
+            return it.count > 0
+        }
     }
 
     fun getUserById(id: Int): User? {
@@ -158,24 +164,6 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, "
         }
     }
 
-    fun checkPassword(userId: Int, password: String): Boolean {
-        readableDatabase.rawQuery("SELECT * FROM users WHERE id=? AND password=?", arrayOf(userId.toString(), password)).use {
-            return it.moveToFirst()
-        }
-    }
-
-    fun changePassword(userId: Int, newPassword: String): Int {
-        val cv = ContentValues().apply {
-            put("password", newPassword)
-        }
-        return writableDatabase.update("users", cv, "id=?", arrayOf(userId.toString()))
-    }
-
-    fun deleteUser(id: Int): Int {
-        writableDatabase.delete("apartments", "id_user=?", arrayOf(id.toString()))
-        return writableDatabase.delete("users", "id=?", arrayOf(id.toString()))
-    }
-
     fun insertUser(user: User): Long = writableDatabase.insert("users", null, ContentValues().apply {
         put("username", user.username)
         put("password", user.password)
@@ -183,13 +171,12 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, "
         put("role", user.role)
     })
 
-    fun updateUserInfo(userId: Int, fullName: String, role: Int): Int {
-        val cv = ContentValues().apply {
-            put("fullName", fullName)
-            put("role", role)
-        }
-        return writableDatabase.update("users", cv, "id=?", arrayOf(userId.toString()))
-    }
+    fun updateUserInfo(id: Int, fullName: String, role: Int): Int = writableDatabase.update("users", ContentValues().apply {
+        put("fullName", fullName)
+        put("role", role)
+    }, "id=?", arrayOf(id.toString()))
+
+    fun deleteUser(id: Int): Int = writableDatabase.delete("users", "id=?", arrayOf(id.toString()))
 
     fun getAllApartments(): ArrayList<Apartment> = ArrayList<Apartment>().apply {
         readableDatabase.rawQuery("SELECT * FROM apartments ORDER BY id DESC", null).use {
@@ -224,7 +211,7 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, "
         put("address", apartment.address)
         put("description", apartment.description)
         put("area", apartment.area)
-        put("imagePath", apartment.imagePath)
+        put("imagePaths", apartment.imagePaths)
         put("status", apartment.status)
         put("id_user", apartment.id_user)
         put("id_renter", apartment.id_renter)
@@ -237,7 +224,7 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, "
         put("address", apartment.address)
         put("description", apartment.description)
         put("area", apartment.area)
-        put("imagePath", apartment.imagePath)
+        put("imagePaths", apartment.imagePaths)
         put("status", apartment.status)
         put("id_user", apartment.id_user)
         put("id_renter", apartment.id_renter)
@@ -254,36 +241,13 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, "
         return writableDatabase.update("apartments", cv, "id=?", arrayOf(apartmentId.toString()))
     }
 
-    fun getAvailableApartmentsCount(): Int = readableDatabase.rawQuery("SELECT COUNT(*) FROM apartments WHERE status = 'Còn trống'", null).use { if (it.moveToFirst()) it.getInt(0) else 0 }
-    fun getOccupiedApartmentsCount(): Int = readableDatabase.rawQuery("SELECT COUNT(*) FROM apartments WHERE status = 'Đã thuê'", null).use { if (it.moveToFirst()) it.getInt(0) else 0 }
+    fun getAvailableApartmentsCount(): Int = readableDatabase.rawQuery("SELECT COUNT(*) FROM apartments WHERE status LIKE '%Còn trống%'", null).use { if (it.moveToFirst()) it.getInt(0) else 0 }
+    fun getOccupiedApartmentsCount(): Int = readableDatabase.rawQuery("SELECT COUNT(*) FROM apartments WHERE status LIKE '%Đã thuê%'", null).use { if (it.moveToFirst()) it.getInt(0) else 0 }
 
-    fun insertViewHistory(apartmentId: Int, userId: Int) {
-        writableDatabase.insert("view_history", null, ContentValues().apply {
-            put("apartment_id", apartmentId)
-            put("user_id", userId)
-            put("view_time", System.currentTimeMillis())
-        })
+    fun isApartmentSaved(apartmentId: Int, userId: Int): Boolean {
+        readableDatabase.rawQuery("SELECT * FROM saved_apartments WHERE apartment_id = ? AND user_id = ?", arrayOf(apartmentId.toString(), userId.toString())).use { return it.moveToFirst() }
     }
-
-    fun getViewHistory(userId: Int): ArrayList<Apartment> {
-        val list = ArrayList<Apartment>()
-        readableDatabase.rawQuery(
-            "SELECT a.* FROM apartments a INNER JOIN view_history h ON a.id = h.apartment_id WHERE h.user_id = ? ORDER BY h.view_time DESC",
-            arrayOf(userId.toString())
-        ).use {
-            if (it.moveToFirst()) do {
-                list.add(Apartment(
-                    it.getInt(0), it.getString(1), it.getDouble(2), it.getString(3),
-                    it.getString(4) ?: "", it.getDouble(5), it.getString(6) ?: "",
-                    it.getString(7) ?: "Còn trống", it.getInt(8),
-                    if (it.isNull(9)) null else it.getInt(9),
-                    it.getString(10) ?: ""
-                ))
-            } while (it.moveToNext())
-        }
-        return list
-    }
-
+    
     fun saveApartment(apartmentId: Int, userId: Int) {
         writableDatabase.insert("saved_apartments", null, ContentValues().apply {
             put("apartment_id", apartmentId)
@@ -296,26 +260,54 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, "
         writableDatabase.delete("saved_apartments", "apartment_id = ? AND user_id = ?", arrayOf(apartmentId.toString(), userId.toString()))
     }
 
-    fun isApartmentSaved(apartmentId: Int, userId: Int): Boolean {
-        readableDatabase.rawQuery("SELECT * FROM saved_apartments WHERE apartment_id = ? AND user_id = ?", arrayOf(apartmentId.toString(), userId.toString())).use { return it.moveToFirst() }
-    }
-
     fun getSavedApartments(userId: Int): ArrayList<Apartment> {
         val list = ArrayList<Apartment>()
-        readableDatabase.rawQuery(
-            "SELECT a.* FROM apartments a INNER JOIN saved_apartments s ON a.id = s.apartment_id WHERE s.user_id = ? ORDER BY s.saved_time DESC",
-            arrayOf(userId.toString())
-        ).use {
-            if (it.moveToFirst()) do {
-                list.add(Apartment(
-                    it.getInt(0), it.getString(1), it.getDouble(2), it.getString(3),
-                    it.getString(4) ?: "", it.getDouble(5), it.getString(6) ?: "",
-                    it.getString(7) ?: "Còn trống", it.getInt(8),
-                    if (it.isNull(9)) null else it.getInt(9),
-                    it.getString(10) ?: ""
-                ))
-            } while (it.moveToNext())
+        val query = "SELECT apartments.* FROM apartments INNER JOIN saved_apartments ON apartments.id = saved_apartments.apartment_id WHERE saved_apartments.user_id = ? ORDER BY saved_apartments.saved_time DESC"
+        readableDatabase.rawQuery(query, arrayOf(userId.toString())).use {
+            if (it.moveToFirst()) {
+                do {
+                    list.add(Apartment(
+                        it.getInt(0), it.getString(1), it.getDouble(2), it.getString(3),
+                        it.getString(4) ?: "", it.getDouble(5), it.getString(6) ?: "",
+                        it.getString(7) ?: "Còn trống", it.getInt(8),
+                        if (it.isNull(9)) null else it.getInt(9),
+                        it.getString(10) ?: ""
+                    ))
+                } while (it.moveToNext())
+            }
         }
         return list
+    }
+
+    fun getViewHistory(userId: Int): ArrayList<Apartment> {
+        val list = ArrayList<Apartment>()
+        val query = "SELECT apartments.* FROM apartments INNER JOIN view_history ON apartments.id = view_history.apartment_id WHERE view_history.user_id = ? ORDER BY view_history.view_time DESC"
+        readableDatabase.rawQuery(query, arrayOf(userId.toString())).use {
+            if (it.moveToFirst()) {
+                do {
+                    list.add(Apartment(
+                        it.getInt(0), it.getString(1), it.getDouble(2), it.getString(3),
+                        it.getString(4) ?: "", it.getDouble(5), it.getString(6) ?: "",
+                        it.getString(7) ?: "Còn trống", it.getInt(8),
+                        if (it.isNull(9)) null else it.getInt(9),
+                        it.getString(10) ?: ""
+                    ))
+                } while (it.moveToNext())
+            }
+        }
+        return list
+    }
+
+    fun checkPassword(userId: Int, password: String): Boolean {
+        readableDatabase.rawQuery("SELECT * FROM users WHERE id=? AND password=?", arrayOf(userId.toString(), password)).use {
+            return it.moveToFirst()
+        }
+    }
+
+    fun changePassword(userId: Int, newPassword: String): Int {
+        val cv = ContentValues().apply {
+            put("password", newPassword)
+        }
+        return writableDatabase.update("users", cv, "id=?", arrayOf(userId.toString()))
     }
 }
