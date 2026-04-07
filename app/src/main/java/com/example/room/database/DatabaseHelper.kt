@@ -11,7 +11,7 @@ import org.json.JSONObject
 import java.io.InputStream
 import java.nio.charset.Charset
 
-class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, "QuanLyCanHo.db", null, 14) {
+class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, "QuanLyCanHo.db", null, 15) {
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL("""
@@ -114,6 +114,12 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, "
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+        if (oldVersion < 15) {
+            // Xóa và tạo lại để nạp dữ liệu mới nhất nếu cần, hoặc chỉ cần thêm cột
+            // Ở đây tôi chọn xóa bảng apartments và nạp lại để đảm bảo dữ liệu hiển thị đúng cấu trúc mới
+            db.execSQL("DROP TABLE IF EXISTS apartments")
+            onCreate(db)
+        }
     }
 
     fun exportApartmentsToJson(): String {
