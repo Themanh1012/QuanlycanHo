@@ -19,7 +19,7 @@
             android:layout_width="28dp"
             android:layout_height="28dp"
             android:src="@android:drawable/ic_menu_revert"
-            android:tint="@color/text_primary" />
+            app:tint="@color/text_primary" />
 
         <TextView
             android:id="@+id/tvTitle"
@@ -85,7 +85,7 @@
                             android:layout_width="56dp"
                             android:layout_height="56dp"
                             android:src="@android:drawable/ic_menu_gallery"
-                            android:tint="@color/text_secondary" />
+                            app:tint="@color/text_secondary" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -108,6 +108,22 @@
                 android:text="Thêm ảnh"
                 android:textColor="@color/colorPrimary"
                 android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Trạng thái"
+                android:textColor="@color/text_secondary"
+                android:textSize="14sp" />
+
+            <Spinner
+                android:id="@+id/spinnerStatus"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="4dp"
+                android:background="@drawable/bg_input_rounded"
+                android:padding="12dp" />
 
             <TextView
                 android:layout_width="wrap_content"

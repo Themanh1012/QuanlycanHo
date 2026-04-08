@@ -15,6 +15,7 @@ import com.example.room.R
 import com.example.room.user.SettingsActivity
 import com.example.room.auth.LoginActivity
 import com.example.room.admin.AdminDashboardActivity
+import com.example.room.listing.ApartmentListActivity
 
 class ProfileFragment : Fragment() {
 
@@ -54,6 +55,12 @@ class ProfileFragment : Fragment() {
 
         view.findViewById<View>(R.id.btnEditProfile)?.setOnClickListener {
             startActivity(Intent(requireActivity(), EditProfileActivity::class.java))
+        }
+
+        view.findViewById<View>(R.id.btnRentedApartments)?.setOnClickListener {
+            val intent = Intent(requireActivity(), ApartmentListActivity::class.java)
+            intent.putExtra("FILTER_TYPE", "RENTED")
+            startActivity(intent)
         }
 
         view.findViewById<View>(R.id.btnHistory)?.setOnClickListener {
