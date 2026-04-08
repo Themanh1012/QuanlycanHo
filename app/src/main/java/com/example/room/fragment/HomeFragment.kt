@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import com.example.room.listing.AddPostActivity
 import com.example.room.listing.ApartmentDetailActivity
 import com.example.room.listing.ApartmentListActivity
-import com.example.room.listing.MotelListActivity
 import com.example.room.R
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -59,28 +58,9 @@ class HomeFragment : Fragment() {
         dbHelper = DatabaseHelper(requireContext())
 
         val sectionApartments = view.findViewById<View>(R.id.sectionApartments)
-        val sectionMotels = view.findViewById<View>(R.id.sectionMotels)
-
-        view.findViewById<View>(R.id.btnNavApartment).setOnClickListener {
-            sectionApartments.visibility = View.VISIBLE
-            sectionMotels.visibility = View.GONE
-        }
-
-        view.findViewById<View>(R.id.btnNavMotel).setOnClickListener {
-            sectionApartments.visibility = View.GONE
-            sectionMotels.visibility = View.VISIBLE
-        }
 
         view.findViewById<View>(R.id.tvViewAllApartments).setOnClickListener {
             startActivity(Intent(requireActivity(), ApartmentListActivity::class.java))
-        }
-
-        view.findViewById<View>(R.id.tvViewAllMotelsHome).setOnClickListener {
-            startActivity(Intent(requireActivity(), MotelListActivity::class.java))
-        }
-
-        view.findViewById<View>(R.id.btnNavAddPost).setOnClickListener {
-            startActivity(Intent(requireActivity(), AddPostActivity::class.java))
         }
 
         recyclerView = view.findViewById(R.id.rvFeatured)
