@@ -253,13 +253,15 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, "
     fun isApartmentSaved(apartmentId: Int, userId: Int): Boolean {
         readableDatabase.rawQuery("SELECT * FROM saved_apartments WHERE apartment_id = ? AND user_id = ?", arrayOf(apartmentId.toString(), userId.toString())).use { return it.moveToFirst() }
     }
-    
+
     fun saveApartment(apartmentId: Int, userId: Int) {
-        writableDatabase.insert("saved_apartments", null, ContentValues().apply {
-            put("apartment_id", apartmentId)
-            put("user_id", userId)
-            put("saved_time", System.currentTimeMillis())
-        })
+        if (!isApartmentSaved(apartmentId, userId)) {
+            writableDatabase.insert("saved_apartments", null, ContentValues().apply {
+                put("apartment_id", apartmentId)
+                put("user_id", userId)
+                put("saved_time", System.currentTimeMillis())
+            })
+        }
     }
 
     fun unsaveApartment(apartmentId: Int, userId: Int) {
@@ -304,6 +306,22 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, "
         return list
     }
 
+    fun addViewHistory(apartmentId: Int, userId: Int) {
+        writableDatabase.insert("view_history", null, ContentValues().apply {
+            put("apartment_id", apartmentId)
+            put("user_id", userId)
+            put("view_time", System.currentTimeMillis())
+        })
+    }
+
+    fun clearViewHistory(userId: Int): Int {
+        return writableDatabase.delete(
+            "view_history",
+            "user_id = ?",
+            arrayOf(userId.toString())
+        )
+    }
+
     fun checkPassword(userId: Int, password: String): Boolean {
         readableDatabase.rawQuery("SELECT * FROM users WHERE id=? AND password=?", arrayOf(userId.toString(), password)).use {
             return it.moveToFirst()
@@ -316,4 +334,5 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, "
         }
         return writableDatabase.update("users", cv, "id=?", arrayOf(userId.toString()))
     }
+
 }

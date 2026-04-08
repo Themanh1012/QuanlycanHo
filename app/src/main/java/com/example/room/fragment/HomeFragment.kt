@@ -87,6 +87,11 @@ class HomeFragment : Fragment() {
         loadData()
 
         adapter = ApartmentUserAdapter(list) { apartment ->
+
+            val sharedPref = requireActivity().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+            val userId = sharedPref.getInt("userId", 0)
+
+
             val intent = Intent(requireActivity(), ApartmentDetailActivity::class.java)
             intent.putExtra("apartment_id", apartment.id)
             startActivity(intent)
@@ -108,8 +113,17 @@ class HomeFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         updateGreeting()
-        loadData()
-        adapter.notifyDataSetChanged()
+
+        list.clear()
+        list.addAll(dbHelper.getAllApartments().take(5))
+
+        adapter = ApartmentUserAdapter(list) { apartment ->
+            val intent = Intent(requireActivity(), ApartmentDetailActivity::class.java)
+            intent.putExtra("apartment_id", apartment.id)
+            startActivity(intent)
+        }
+
+        recyclerView.adapter = adapter
     }
 
     private fun loadData() {

@@ -12,13 +12,17 @@
     <!-- ConstraintLayout giúp đè các thành phần lên nhau dễ hơn -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:focusable="true">
 
         <!-- 1. ẢNH NỀN CHIẾM TOÀN BỘ THẺ -->
         <ImageView
             android:id="@+id/imgApartment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:clickable="false"
+            android:focusable="false"
             android:scaleType="centerCrop"
             android:src="@drawable/canho01"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -55,6 +59,7 @@
 
         <!-- 4. TRÁI TIM YÊU THÍCH (Góc trên phải - giả lập icon theo UI mẫu) -->
         <androidx.cardview.widget.CardView
+            android:id="@+id/btnSaveContainer"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_marginTop="16dp"
@@ -66,6 +71,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
+                android:id="@+id/btnSave"
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:layout_gravity="center"
