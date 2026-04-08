@@ -55,7 +55,6 @@
 
         <!-- Listing -->
         <activity android:name=".listing.ApartmentDetailActivity" android:exported="false" />
-        <activity android:name=".listing.AddPostActivity" android:exported="false" />
         <activity android:name=".listing.ApartmentListActivity" android:exported="false" />
 
         <!-- User -->
