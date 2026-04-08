@@ -54,18 +54,18 @@ class ApartmentVerticalAdapter(
             if (!firstPath.contains("/") && !firstPath.contains("\\")) {
                 val resId = holder.itemView.context.resources.getIdentifier(firstPath, "drawable", holder.itemView.context.packageName)
                 if (resId != 0) holder.img.setImageResource(resId)
-                else holder.img.setImageResource(R.drawable.canho01)
+                else holder.img.setImageResource(R.drawable.canho1)
             } else {
                 val imgFile = File(firstPath)
                 if (imgFile.exists()) {
                     val bitmap = BitmapFactory.decodeFile(imgFile.absolutePath)
                     holder.img.setImageBitmap(bitmap)
                 } else {
-                    holder.img.setImageResource(R.drawable.canho01)
+                    holder.img.setImageResource(R.drawable.canho1)
                 }
             }
         } else {
-            holder.img.setImageResource(R.drawable.canho01)
+            holder.img.setImageResource(R.drawable.canho1)
         }
 
         holder.itemView.setOnClickListener { onItemClick(apartment) }

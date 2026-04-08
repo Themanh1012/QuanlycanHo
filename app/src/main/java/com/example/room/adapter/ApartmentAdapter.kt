@@ -46,7 +46,6 @@ class ApartmentAdapter(
         try {
             val apartment = apartments[position]
 
-            // 1. Gán text
             holder.tvTitle.text = apartment.title
             holder.tvAddress.text = apartment.address
             holder.tvArea.text = "Diện tích: ${apartment.area} m²"
@@ -54,7 +53,6 @@ class ApartmentAdapter(
             val formatter = DecimalFormat("#,###")
             holder.tvPrice.text = formatter.format(apartment.price) + " VND/tháng"
 
-            // 2. Hiển thị trạng thái & Người thuê
             if (apartment.status.contains("Đã thuê", ignoreCase = true)) {
                 val renter = apartment.id_renter?.let { dbHelper?.getUserById(it) }
                 holder.tvStatus.text = "Đã thuê"
@@ -68,37 +66,62 @@ class ApartmentAdapter(
                 holder.tvRenterName.visibility = View.GONE
             }
 
-            // 3. Xử lý hình ảnh (Rất quan trọng)
             val paths = apartment.imagePaths.split(",").filter { it.isNotEmpty() }
-            val firstPath = if (paths.isNotEmpty()) paths[0] else ""
+            val firstPath = if (paths.isNotEmpty()) paths[0].trim() else ""
 
             if (firstPath.isNotEmpty()) {
+                val context = holder.itemView.context
                 if (!firstPath.contains("/") && !firstPath.contains("\\")) {
-                    val resId = holder.itemView.context.resources.getIdentifier(firstPath, "drawable", holder.itemView.context.packageName)
-                    if (resId != 0) holder.imgApartment.setImageResource(resId)
-                    else holder.imgApartment.setImageResource(R.drawable.canho01)
+                    val resId = context.resources.getIdentifier(firstPath, "drawable", context.packageName)
+                    if (resId != 0) {
+                        // Tối ưu nạp ảnh từ DRAWABLE
+                        val options = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+                        BitmapFactory.decodeResource(context.resources, resId, options)
+                        options.inSampleSize = calculateInSampleSize(options, 300, 200)
+                        options.inJustDecodeBounds = false
+                        val bitmap = BitmapFactory.decodeResource(context.resources, resId, options)
+                        holder.imgApartment.setImageBitmap(bitmap)
+                    } else {
+                        holder.imgApartment.setImageResource(R.drawable.canho1)
+                    }
                 } else {
                     val imgFile = File(firstPath)
                     if (imgFile.exists()) {
-                        val bitmap = BitmapFactory.decodeFile(imgFile.absolutePath)
-                        if (bitmap != null) holder.imgApartment.setImageBitmap(bitmap)
-                        else holder.imgApartment.setImageResource(R.drawable.canho01)
+                        val options = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+                        BitmapFactory.decodeFile(imgFile.absolutePath, options)
+                        options.inSampleSize = calculateInSampleSize(options, 300, 200)
+                        options.inJustDecodeBounds = false
+                        val bitmap = BitmapFactory.decodeFile(imgFile.absolutePath, options)
+                        holder.imgApartment.setImageBitmap(bitmap)
                     } else {
-                        holder.imgApartment.setImageResource(R.drawable.canho01)
+                        holder.imgApartment.setImageResource(R.drawable.canho1)
                     }
                 }
             } else {
-                holder.imgApartment.setImageResource(R.drawable.canho01)
+                holder.imgApartment.setImageResource(R.drawable.canho1)
             }
 
-            // 4. Sự kiện click
             holder.btnDetail.setOnClickListener { onItemClick(apartment) }
             holder.btnEdit.setOnClickListener { onEditClick(apartment) }
             holder.btnDelete.setOnClickListener { onDeleteClick(apartment) }
             
         } catch (e: Exception) {
             e.printStackTrace()
+            holder.imgApartment.setImageResource(R.drawable.canho1)
         }
+    }
+
+    private fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
+        val (height: Int, width: Int) = options.outHeight to options.outWidth
+        var inSampleSize = 1
+        if (height > reqHeight || width > reqWidth) {
+            val halfHeight: Int = height / 2
+            val halfWidth: Int = width / 2
+            while (halfHeight / inSampleSize >= reqHeight && halfWidth / inSampleSize >= reqWidth) {
+                inSampleSize *= 2
+            }
+        }
+        return inSampleSize
     }
 
     override fun getItemCount(): Int = apartments.size

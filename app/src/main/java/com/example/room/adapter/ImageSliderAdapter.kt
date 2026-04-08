@@ -31,7 +31,7 @@ class ImageSliderAdapter(private val imagePaths: List<String>) :
             if (resId != 0) {
                 holder.imageView.setImageResource(resId)
             } else {
-                holder.imageView.setImageResource(R.drawable.canho01)
+                holder.imageView.setImageResource(R.drawable.canho1)
             }
         } else {
             // Load từ file hệ thống
@@ -40,7 +40,7 @@ class ImageSliderAdapter(private val imagePaths: List<String>) :
                 val bitmap = BitmapFactory.decodeFile(imgFile.absolutePath)
                 holder.imageView.setImageBitmap(bitmap)
             } else {
-                holder.imageView.setImageResource(R.drawable.canho01)
+                holder.imageView.setImageResource(R.drawable.canho1)
             }
         }
     }

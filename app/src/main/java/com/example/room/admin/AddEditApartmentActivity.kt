@@ -48,7 +48,6 @@ class AddEditApartmentActivity : AppCompatActivity() {
     private lateinit var rvImages: RecyclerView
     private lateinit var imageAdapter: ImageSelectedAdapter
 
-    // Launcher mới để chọn ảnh từ Gallery
     private val galleryLauncher = registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
         uris?.forEach { uri ->
             saveImageFromUri(uri)
@@ -203,13 +202,26 @@ class AddEditApartmentActivity : AppCompatActivity() {
     }
 
     private fun showDrawableImages() {
+        // Cập nhật đầy đủ danh sách ảnh từ screenshot bạn gửi
         val drawableNames = arrayOf(
-            "canho01", "canho02", "canho03", "batdongsan", "landmark", 
-            "thaodien", "vinhomes", "bietthu", "chungcu", "studio"
+            "canho1", "canho1_1", "canho1_2", "canho1_3", 
+            "canho2_1", "canho2_2", "canho2_3", "canho2_4",
+            "canho3", "canho3_1", "canho3_2", "canho3_3", 
+            "canho4", "canho4_1", "canho4_2", "canho4_3", 
+            "canho5", "canho5_1", "canho5_2", "canho5_3", 
+            "canho6", "canho6_1", "canho6_2", "canho6_3",
+            "batdongsan", "landmark", "thaodien", "vinhomes", 
+            "bietthu", "chungcu", "studio"
         )
+        
         val existingDrawables = drawableNames.filter { name ->
             resources.getIdentifier(name, "drawable", packageName) != 0
         }.toTypedArray()
+
+        if (existingDrawables.isEmpty()) {
+            Toast.makeText(this, "Không tìm thấy ảnh mẫu nào trong drawable!", Toast.LENGTH_SHORT).show()
+            return
+        }
 
         AlertDialog.Builder(this)
             .setTitle("Chọn ảnh mẫu")
@@ -348,7 +360,7 @@ class ImageSelectedAdapter(private val images: List<String>, private val onDelet
         } else {
             val bitmap = BitmapFactory.decodeFile(path)
             if (bitmap != null) holder.img.setImageBitmap(bitmap)
-            else holder.img.setImageResource(R.drawable.canho01)
+            else holder.img.setImageResource(R.drawable.canho1)
         }
         holder.btnDelete.setOnClickListener { onDelete(position) }
     }

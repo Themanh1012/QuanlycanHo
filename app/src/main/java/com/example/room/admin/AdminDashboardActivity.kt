@@ -66,11 +66,6 @@ class AdminDashboardActivity : AppCompatActivity() {
     }
 
     private fun setupClickListeners() {
-        // QUẢN LÝ THUÊ NHÀ (MỚI)
-        findViewById<CardView>(R.id.cardManageRentals).setOnClickListener {
-            startActivity(Intent(this, ManageRentalsActivity::class.java))
-        }
-
         findViewById<CardView>(R.id.cardManageApartments).setOnClickListener {
             startActivity(Intent(this, ManageApartmentsActivity::class.java))
         }
