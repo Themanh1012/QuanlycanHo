@@ -11,6 +11,7 @@ import com.example.room.R
 import com.example.room.adapter.ApartmentVerticalAdapter
 import com.example.room.database.DatabaseHelper
 import com.example.room.model.Apartment
+import android.content.Context
 
 class ApartmentListActivity : AppCompatActivity() {
 
@@ -27,7 +28,7 @@ class ApartmentListActivity : AppCompatActivity() {
         dbHelper = DatabaseHelper(this)
         recyclerView = findViewById(R.id.rvApartmentsUser)
 
-        // 1. Nhận "Mật mã" từ Trang chủ (HomeFragment)
+        // 1. Nhận "Mật mã" từ các màn hình khác
         filterType = intent.getStringExtra("FILTER_TYPE") ?: "ALL"
 
         // 2. Đổi tiêu đề màn hình dựa theo mật mã
@@ -36,6 +37,7 @@ class ApartmentListActivity : AppCompatActivity() {
             "DIAMOND" -> tvListTitle.text = "Căn hộ Kim Cương"
             "VIP" -> tvListTitle.text = "Căn hộ VIP"
             "DISCOUNT" -> tvListTitle.text = "Ưu đãi & Giảm giá"
+            "RENTED" -> tvListTitle.text = "Nhà đã thuê"
             else -> tvListTitle.text = "Tất cả Căn hộ"
         }
 
@@ -58,13 +60,16 @@ class ApartmentListActivity : AppCompatActivity() {
 
     private fun loadData() {
         val allApts = dbHelper.getAllApartments()
+        val sharedPref = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+        val currentUserId = sharedPref.getInt("userId", -1)
 
-        // Lọc dữ liệu trực tiếp dựa trên loại Badge
+        // Lọc dữ liệu trực tiếp
         val filtered = when (filterType) {
-            "DIAMOND" -> allApts.filter { it.badge == "VIP KIM CƯƠNG" }
-            "VIP" -> allApts.filter { it.badge == "HẠNG VÀNG" || it.badge == "HẠNG BẠC" }
-            "DISCOUNT" -> allApts.filter { it.badge == "GIẢM GIÁ HOT" }
-            else -> allApts
+            "DIAMOND" -> allApts.filter { it.badge == "VIP KIM CƯƠNG" && it.status != "Đã thuê" }
+            "VIP" -> allApts.filter { (it.badge == "HẠNG VÀNG" || it.badge == "HẠNG BẠC") && it.status != "Đã thuê" }
+            "DISCOUNT" -> allApts.filter { it.badge == "GIẢM GIÁ HOT" && it.status != "Đã thuê" }
+            "RENTED" -> allApts.filter { it.id_renter == currentUserId }
+            else -> allApts.filter { it.status != "Đã thuê" }
         }
 
         list.clear()

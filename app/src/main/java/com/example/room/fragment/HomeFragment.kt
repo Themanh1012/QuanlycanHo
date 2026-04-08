@@ -172,21 +172,24 @@ class HomeFragment : Fragment() {
 
     // HÀM PHÂN LOẠI DỮ LIỆU THÔNG MINH THEO TAG (BADGE)
     private fun distributeData(sourceList: List<Apartment>) {
-        // 1. Nổi bật (Lấy 5 căn mới nhất bất kỳ)
+        // Lọc bỏ những căn đã thuê trước khi phân loại để hiển thị lên Home
+        val availableList = sourceList.filter { it.status != "Đã thuê" }
+
+        // 1. Nổi bật (Lấy 5 căn mới nhất bất kỳ trong danh sách còn trống)
         listFeatured.clear()
-        listFeatured.addAll(sourceList.take(5))
+        listFeatured.addAll(availableList.take(5))
 
         // 2. Căn hộ Kim Cương (Badge = VIP KIM CƯƠNG)
         listDiamond.clear()
-        listDiamond.addAll(sourceList.filter { it.badge == "VIP KIM CƯƠNG" })
+        listDiamond.addAll(availableList.filter { it.badge == "VIP KIM CƯƠNG" })
 
         // 3. Căn hộ VIP (Badge = HẠNG VÀNG hoặc HẠNG BẠC)
         listVip.clear()
-        listVip.addAll(sourceList.filter { it.badge == "HẠNG VÀNG" || it.badge == "HẠNG BẠC" })
+        listVip.addAll(availableList.filter { it.badge == "HẠNG VÀNG" || it.badge == "HẠNG BẠC" })
 
         // 4. Giảm giá (Badge = GIẢM GIÁ HOT)
         listDiscount.clear()
-        listDiscount.addAll(sourceList.filter { it.badge == "GIẢM GIÁ HOT" })
+        listDiscount.addAll(availableList.filter { it.badge == "GIẢM GIÁ HOT" })
 
         // Thông báo cho tất cả Adapter cập nhật UI
         adapterFeatured.notifyDataSetChanged()

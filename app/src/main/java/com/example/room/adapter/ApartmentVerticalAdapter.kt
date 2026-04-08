@@ -23,10 +23,10 @@ class ApartmentVerticalAdapter(
         val tvPrice: TextView = view.findViewById(R.id.tvPrice)
         val tvAddress: TextView = view.findViewById(R.id.tvAddress)
         val tvBadge: TextView? = view.findViewById(R.id.tvBadge)
+        val tvStatus: TextView? = view.findViewById(R.id.tvStatus)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        // CHÚ Ý DÒNG NÀY: Dùng layout dọc
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_apartment_vertical, parent, false)
         return ViewHolder(view)
     }
@@ -45,6 +45,16 @@ class ApartmentVerticalAdapter(
             holder.tvBadge?.visibility = View.VISIBLE
         } else {
             holder.tvBadge?.visibility = View.GONE
+        }
+
+        // Cập nhật trạng thái hiển thị
+        holder.tvStatus?.text = apartment.status
+        if (apartment.status == "Đã thuê") {
+            holder.tvStatus?.setBackgroundResource(R.drawable.bg_status_rented) // Hoặc màu đỏ
+            holder.tvStatus?.alpha = 1.0f
+        } else {
+            holder.tvStatus?.setBackgroundResource(R.drawable.bg_status_available)
+            holder.tvStatus?.alpha = 0.5f // Mờ đi một chút như trong layout cũ
         }
 
         val paths = apartment.imagePaths.split(",")
