@@ -25,16 +25,23 @@ class ApartmentDetailActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_apartment_detail)
 
+
+
         dbHelper = DatabaseHelper(this)
 
         val sharedPref = getSharedPreferences("UserPrefs", MODE_PRIVATE)
         val userId = sharedPref.getInt("userId", 0)
         val userRole = sharedPref.getInt("role", 2)
 
-        val btnBack = findViewById<CardView>(R.id.btnBack)
-        btnBack.setOnClickListener { finish() }
 
         val apartmentId = intent.getIntExtra("apartment_id", -1)
+
+        if (apartmentId != -1 && userId != 0) {
+            dbHelper.addViewHistory(apartmentId, userId)
+        }
+
+        val btnBack = findViewById<CardView>(R.id.btnBack)
+        btnBack.setOnClickListener { finish() }
 
         if (apartmentId == -1) {
             Toast.makeText(this, "Lỗi: không có ID", Toast.LENGTH_SHORT).show()
