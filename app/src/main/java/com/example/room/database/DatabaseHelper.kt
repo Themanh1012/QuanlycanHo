@@ -11,7 +11,7 @@ import org.json.JSONObject
 import java.io.InputStream
 import java.nio.charset.Charset
 
-class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, "QuanLyCanHo.db", null, 15) {
+class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, "QuanLyCanHo.db", null, 18) {
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL("""
@@ -109,17 +109,36 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, "
                 db.insert("apartments", null, cv)
             }
         } catch (e: Exception) {
-            db.execSQL("INSERT INTO apartments (title, price, address, description, area, imagePaths, status, id_user, badge) VALUES ('Căn hộ Sunrise City', 8000000, 'Quận 7, TP.HCM', 'Căn hộ cao cấp...', 65, 'canho01', 'Còn trống', 1, 'VIP KIM CƯƠNG')")
+            db.execSQL("INSERT INTO apartments (title, price, address, description, area, imagePaths, status, id_user, badge) VALUES ('Căn hộ Sunrise City', 8000000, 'Quận 7, TP.HCM', 'Căn hộ cao cấp...', 65, 'canho1', 'Còn trống', 1, 'VIP KIM CƯƠNG')")
         }
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        if (oldVersion < 15) {
-            // Xóa và tạo lại để nạp dữ liệu mới nhất nếu cần, hoặc chỉ cần thêm cột
-            // Ở đây tôi chọn xóa bảng apartments và nạp lại để đảm bảo dữ liệu hiển thị đúng cấu trúc mới
+        if (oldVersion < newVersion) {
+            // Chỉ xóa và nạp lại bảng apartments để cập nhật dữ liệu từ JSON mới nhất
             db.execSQL("DROP TABLE IF EXISTS apartments")
+            db.execSQL("""
+                CREATE TABLE IF NOT EXISTS apartments (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    title TEXT, price REAL, address TEXT,
+                    description TEXT, area REAL, imagePaths TEXT, status TEXT DEFAULT 'Còn trống', 
+                    id_user INTEGER, id_renter INTEGER DEFAULT NULL, badge TEXT DEFAULT ''
+                )
+            """.trimIndent())
+            importApartmentsFromJson(db)
+            
+            // Đảm bảo các bảng khác vẫn tồn tại (nếu chưa có)
             onCreate(db)
         }
+    }
+
+    fun resetPassword(username: String, fullName: String, newPass: String): Boolean {
+        val db = writableDatabase
+        val cv = ContentValues().apply {
+            put("password", newPass)
+        }
+        val result = db.update("users", cv, "username=? AND fullName=?", arrayOf(username, fullName))
+        return result > 0
     }
 
     fun exportApartmentsToJson(): String {
@@ -243,6 +262,14 @@ class DatabaseHelper(private val context: Context) : SQLiteOpenHelper(context, "
         val cv = ContentValues().apply {
             put("status", "Đã thuê")
             put("id_renter", renterId)
+        }
+        return writableDatabase.update("apartments", cv, "id=?", arrayOf(apartmentId.toString()))
+    }
+
+    fun cancelRental(apartmentId: Int): Int {
+        val cv = ContentValues().apply {
+            put("status", "Còn trống")
+            putNull("id_renter")
         }
         return writableDatabase.update("apartments", cv, "id=?", arrayOf(apartmentId.toString()))
     }

@@ -41,11 +41,11 @@ class RentalManageAdapter(
         val formatter = DecimalFormat("#,###")
         holder.tvPrice.text = "Giá: ${formatter.format(apt.price)} VND/tháng"
 
-        // Lấy tên người thuê
+
         val renter = apt.id_renter?.let { dbHelper.getUserById(it) }
         holder.tvRenter.text = "Người thuê: ${renter?.fullName ?: "Không xác định"}"
 
-        // Load ảnh
+
         val paths = apt.imagePaths.split(",")
         val firstPath = if (paths.isNotEmpty()) paths[0] else ""
         if (firstPath.isNotEmpty()) {

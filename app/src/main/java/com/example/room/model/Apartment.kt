@@ -12,4 +12,12 @@ data class Apartment(
     val id_user: Int,
     val id_renter: Int? = null,
     val badge: String = ""
-)
+) {
+    fun getFinalPrice(): Double {
+        return if (badge == "GIẢM GIÁ HOT") {
+            price * 0.9
+        } else {
+            price
+        }
+    }
+}

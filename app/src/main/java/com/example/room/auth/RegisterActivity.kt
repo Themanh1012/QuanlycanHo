@@ -30,7 +30,25 @@ class RegisterActivity : AppCompatActivity() {
             val password = edtPassword.text.toString().trim()
 
             if (fullName.isEmpty() || username.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, getString(R.string.register_toast_empty), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // Kiểm tra tài khoản không được chứa dấu cách
+            if (username.contains(" ")) {
+                Toast.makeText(this, "Tài khoản không được chứa khoảng trắng", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // Kiểm tra mật khẩu không được nhỏ hơn 4 ký tự
+            if (password.length < 4) {
+                Toast.makeText(this, "Mật khẩu phải có ít nhất 4 ký tự", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // Kiểm tra tài khoản đã tồn tại chưa
+            if (dbHelper.isUsernameExists(username)) {
+                Toast.makeText(this, "Tài khoản này đã tồn tại", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -44,10 +62,10 @@ class RegisterActivity : AppCompatActivity() {
             val result = dbHelper.insertUser(newUser)
 
             if (result != -1L) {
-                Toast.makeText(this, getString(R.string.register_toast_success), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Đăng ký thành công", Toast.LENGTH_SHORT).show()
                 finish()
             } else {
-                Toast.makeText(this, getString(R.string.register_toast_fail), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Đăng ký thất bại", Toast.LENGTH_SHORT).show()
             }
         }
     }
