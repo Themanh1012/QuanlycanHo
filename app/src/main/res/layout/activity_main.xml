@@ -7,7 +7,7 @@
     android:background="@color/bg_main"
     tools:context=".MainActivity">
 
-    <!-- Khu vực hiển thị các Fragment (Home, Saved, Profile) -->
+    <!-- Khu vực hiển thị các Fragment -->
     <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
@@ -15,7 +15,29 @@
         app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Đường cắt mỏng ảo diệu để ngăn cách nội dung và menu (Tạo cảm giác UI xịn) -->
+    <!-- NÚT LÊN ĐẦU TRANG TOÀN CỤC (MÀU XANH DƯƠNG) -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/btnGlobalScrollTop"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+        android:visibility="gone"
+        app:cardBackgroundColor="#2563EB"
+        app:cardCornerRadius="26dp"
+        app:cardElevation="6dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:src="@android:drawable/arrow_up_float"
+            app:tint="#FFFFFF" />
+    </androidx.cardview.widget.CardView>
+
+    <!-- Đường cắt mỏng -->
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"

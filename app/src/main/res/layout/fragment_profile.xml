@@ -6,7 +6,9 @@
     android:background="@color/bg_main"
     android:orientation="vertical">
 
+    <!-- ĐÃ THÊM ID profileScrollView TẠI ĐÂY -->
     <ScrollView
+        android:id="@+id/profileScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="none">
@@ -26,7 +28,6 @@
                 android:paddingTop="48dp"
                 android:paddingBottom="24dp">
 
-                <!-- Avatar có viền -->
                 <androidx.cardview.widget.CardView
                     android:layout_width="100dp"
                     android:layout_height="100dp"
@@ -150,7 +151,6 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <!-- Cập nhật thông tin -->
                     <LinearLayout
                         android:id="@+id/btnEditProfile"
                         android:layout_width="match_parent"
@@ -200,7 +200,6 @@
                         android:layout_marginStart="72dp"
                         android:background="@color/bg_main" />
 
-                    <!-- Lịch sử -->
                     <LinearLayout
                         android:id="@+id/btnHistory"
                         android:layout_width="match_parent"
@@ -250,7 +249,6 @@
                         android:layout_marginStart="72dp"
                         android:background="@color/bg_main" />
 
-                    <!-- Cài đặt -->
                     <LinearLayout
                         android:id="@+id/btnSettings"
                         android:layout_width="match_parent"
@@ -296,7 +294,6 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- Nút Đăng Xuất (Nằm riêng lẻ ở dưới cùng) -->
             <Button
                 android:id="@+id/btnLogoutFromProfile"
                 android:layout_width="match_parent"

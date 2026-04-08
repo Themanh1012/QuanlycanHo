@@ -59,7 +59,7 @@
 
         <!-- 4. TRÁI TIM YÊU THÍCH (Góc trên phải - giả lập icon theo UI mẫu) -->
         <androidx.cardview.widget.CardView
-            android:id="@+id/btnSaveContainer"
+            android:id="@+id/btnFavoriteCard"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_marginTop="16dp"
@@ -71,7 +71,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
-                android:id="@+id/btnSave"
+                android:id="@+id/ivFavoriteIcon"
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:layout_gravity="center"
